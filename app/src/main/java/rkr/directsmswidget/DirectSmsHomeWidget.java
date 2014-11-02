@@ -1,6 +1,5 @@
 package rkr.directsmswidget;
 
-import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
@@ -8,7 +7,7 @@ import android.widget.RemoteViews;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.widget.Toast;
-import android.view.View;
+import android.util.Log;
 
 
 /**
@@ -17,7 +16,7 @@ import android.view.View;
  */
 public class DirectSmsHomeWidget extends AppWidgetProvider {
 
-    public static String CLICK_ACTION = "WidgetClicked";
+    public static String CLICK_ACTION = "rkr.directsmswidget.intent.action.Click";
 
 
     @Override
@@ -34,7 +33,6 @@ public class DirectSmsHomeWidget extends AppWidgetProvider {
         final int N = appWidgetIds.length;
         for (int i=0; i<N; i++) {
             updateAppWidget(context, appWidgetManager, appWidgetIds[i]);
-            addClickHandler(context, appWidgetManager, appWidgetIds[i]);
         }
     }
 
@@ -57,20 +55,17 @@ public class DirectSmsHomeWidget extends AppWidgetProvider {
         // Enter relevant functionality for when the last widget is disabled
     }
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+    void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
 
         CharSequence widgetText = DirectSmsHomeWidgetConfigureActivity.loadTitlePref(context, appWidgetId);
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.direct_sms_home_widget);
+        views.setOnClickPendingIntent(R.id.appwidget_text, getPendingSelfIntent(context, CLICK_ACTION));
+        views.setOnClickPendingIntent(R.id.appwidget_frame, getPendingSelfIntent(context, CLICK_ACTION));
         views.setTextViewText(R.id.appwidget_text, widgetText);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
-    }
-
-    void addClickHandler (Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.direct_sms_home_widget);
-        views.setOnClickPendingIntent(R.id.appwidget_text, getPendingSelfIntent(context, CLICK_ACTION));
     }
 
     protected PendingIntent getPendingSelfIntent(Context context, String action) {

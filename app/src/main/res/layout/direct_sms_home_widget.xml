@@ -4,7 +4,7 @@
     android:padding="@dimen/widget_margin"
     android:background="#09C"
     android:id="@+id/appwidget_frame"
-    android:clickable="false">
+    android:clickable="true">
 
     <TextView
         android:id="@+id/appwidget_text"
