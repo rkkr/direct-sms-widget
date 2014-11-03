@@ -6,9 +6,6 @@ import android.content.Context;
 import android.widget.RemoteViews;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.widget.Toast;
-import android.util.Log;
-
 
 /**
  * Implementation of App Widget functionality.
@@ -23,7 +20,7 @@ public class DirectSmsHomeWidget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
         if (intent.getAction().equals(CLICK_ACTION)) {
-            Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
+            SmsFactory.SendForWidget(context, intent);
         }
     }
 

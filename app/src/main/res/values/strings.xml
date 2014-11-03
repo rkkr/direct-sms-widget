@@ -3,7 +3,10 @@
 
     <string name="app_name">Direct SMS Widget</string>
     <string name="appwidget_text">EXAMPLE</string>
-    <string name="configure">Configure</string>
+    <string name="configure_phone">Enter Phone number</string>
+    <string name="select_phone">Select</string>
+    <string name="configure_message">Enter text message</string>
+    <string name="configure_confirmation">Show Confirmation dialog?</string>
     <string name="add_widget">Add widget</string>
 
 </resources>

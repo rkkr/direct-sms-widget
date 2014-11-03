@@ -7,7 +7,7 @@ import android.telephony.SmsManager;
 public class SmsFactory {
 
     public static void SendForWidget(Context context, Intent intent){
-        String phoneNumber = "+37064603228";
+        String phoneNumber = "123123123";
         String message = "Hello World!";
 
         SmsManager smsManager = SmsManager.getDefault();

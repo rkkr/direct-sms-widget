@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.provider.ContactsContract;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -17,9 +20,10 @@ import android.widget.Toast;
 public class DirectSmsHomeWidgetConfigureActivity extends Activity {
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-    EditText mAppWidgetText;
+    //EditText mAppWidgetText;
     private static final String PREFS_NAME = "rkr.directsmswidget.DirectSmsHomeWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
+    private static final int CONTACT_PICKER_RESULT = 1;
 
     public DirectSmsHomeWidgetConfigureActivity() {
         super();
@@ -34,7 +38,23 @@ public class DirectSmsHomeWidgetConfigureActivity extends Activity {
         setResult(RESULT_CANCELED);
 
         setContentView(R.layout.direct_sms_home_widget_configure);
-        mAppWidgetText = (EditText)findViewById(R.id.appwidget_text);
+
+        Button btnContacts = (Button) findViewById(R.id.btn_select);
+        btnContacts.setOnClickListener(new OnClickListener() {
+
+            @Override
+
+            public void onClick(View arg0) {
+
+                Intent pickContactIntent = new Intent( Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI );
+                pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
+                startActivityForResult(pickContactIntent, CONTACT_PICKER_RESULT);
+
+            }
+
+        });
+
+        //mAppWidgetText = (EditText)findViewById(R.id.appwidget_text);
         findViewById(R.id.add_button).setOnClickListener(mOnClickListener);
 
         // Find the widget id from the intent.
@@ -51,7 +71,7 @@ public class DirectSmsHomeWidgetConfigureActivity extends Activity {
             return;
         }
 
-        mAppWidgetText.setText(loadTitlePref(DirectSmsHomeWidgetConfigureActivity.this, mAppWidgetId));
+        //mAppWidgetText.setText(loadTitlePref(DirectSmsHomeWidgetConfigureActivity.this, mAppWidgetId));
     }
 
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
@@ -59,8 +79,8 @@ public class DirectSmsHomeWidgetConfigureActivity extends Activity {
             final Context context = DirectSmsHomeWidgetConfigureActivity.this;
 
             // When the button is clicked, store the string locally
-            String widgetText = mAppWidgetText.getText().toString();
-            saveTitlePref(context,mAppWidgetId,widgetText);
+            //String widgetText = mAppWidgetText.getText().toString();
+            //saveTitlePref(context,mAppWidgetId,widgetText);
 
             // It is the responsibility of the configuration activity to update the app widget
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);

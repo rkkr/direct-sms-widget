@@ -3,25 +3,61 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:weightSum="1">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/configure"
+        android:text="@string/configure_phone"
+        android:layout_marginBottom="8dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:ems="10"
+            android:id="@+id/editPhone"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/select_phone"
+            android:id="@+id/btn_select" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/configure_message"
         android:layout_marginBottom="8dp" />
 
     <EditText
-        android:id="@+id/appwidget_text"
+        android:id="@+id/editMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text" />
+        android:inputType="textMultiLine"
+        android:layout_marginBottom="8dp" />
+
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/configure_confirmation"
+        android:id="@+id/chkConfirmation"
+        android:layout_marginBottom="8dp" />
 
     <Button
         android:id="@+id/add_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_widget"
-        android:layout_marginTop="8dp" />
+        android:layout_marginBottom="8dp" />
 
 </LinearLayout>
