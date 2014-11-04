@@ -9,21 +9,21 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/configure_phone"
-        android:layout_marginBottom="8dp" />
+        android:text="@string/configure_phone"/>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp" >
 
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:inputType="phone"
             android:ems="10"
-            android:id="@+id/editPhone"
-            android:layout_marginBottom="8dp" />
+            android:id="@+id/editPhone"/>
 
         <Button
             style="?android:attr/buttonStyleSmall"
@@ -36,28 +36,44 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/configure_message"
-        android:layout_marginBottom="8dp" />
+        android:text="@string/configure_title"/>
+
+    <EditText
+        android:id="@+id/editTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/configure_message"/>
 
     <EditText
         android:id="@+id/editMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="12dp" />
 
-    <CheckBox
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/configure_confirmation"
-        android:id="@+id/chkConfirmation"
+        android:text="@string/configure_click_action"
         android:layout_marginBottom="8dp" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cboClickAction"
+        android:entries="@array/itemsClickAction"
+        android:layout_marginBottom="12dp"/>
 
     <Button
         android:id="@+id/add_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_widget"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="12dp" />
 
 </LinearLayout>
