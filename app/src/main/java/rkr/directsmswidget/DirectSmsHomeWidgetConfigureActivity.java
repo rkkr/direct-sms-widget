@@ -5,13 +5,21 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.provider.ContactsContract;
 import android.widget.EditText;
+import android.widget.RemoteViews;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
+
 
 
 /**
@@ -20,10 +28,8 @@ import android.widget.Toast;
 public class DirectSmsHomeWidgetConfigureActivity extends Activity {
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-    //EditText mAppWidgetText;
-    private static final String PREFS_NAME = "rkr.directsmswidget.DirectSmsHomeWidget";
-    private static final String PREF_PREFIX_KEY = "appwidget_";
     private static final int CONTACT_PICKER_RESULT = 1;
+    private static int widgetClickActionSelection = 0;
 
     public DirectSmsHomeWidgetConfigureActivity() {
         super();
@@ -37,53 +43,73 @@ public class DirectSmsHomeWidgetConfigureActivity extends Activity {
         // out of the widget placement if the user presses the back button.
         setResult(RESULT_CANCELED);
 
+        //Open view
         setContentView(R.layout.direct_sms_home_widget_configure);
 
-        Button btnContacts = (Button) findViewById(R.id.btn_select);
-        btnContacts.setOnClickListener(new OnClickListener() {
+        //Button handlers
+        findViewById(R.id.btn_select).setOnClickListener(mOnSelectContactClickListener);
+        findViewById(R.id.add_button).setOnClickListener(mOnAddClickListener);
+        ((Spinner)findViewById(R.id.cboClickAction)).setOnItemSelectedListener(mOnSelectWidgetClickAction);
 
-            @Override
-
-            public void onClick(View arg0) {
-
-                Intent pickContactIntent = new Intent( Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI );
-                pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
-                startActivityForResult(pickContactIntent, CONTACT_PICKER_RESULT);
-
-            }
-
-        });
-
-        //mAppWidgetText = (EditText)findViewById(R.id.appwidget_text);
-        findViewById(R.id.add_button).setOnClickListener(mOnClickListener);
-
-        // Find the widget id from the intent.
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            mAppWidgetId = extras.getInt(
-                    AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-        }
+        mAppWidgetId = Helpers.IntentToWidgetId(getIntent());
 
         // If this activity was started with an intent without an app widget ID, finish with an error.
         if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             finish();
             return;
         }
-
-        //mAppWidgetText.setText(loadTitlePref(DirectSmsHomeWidgetConfigureActivity.this, mAppWidgetId));
     }
 
-    View.OnClickListener mOnClickListener = new View.OnClickListener() {
+    OnClickListener mOnSelectContactClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent pickContactIntent = new Intent( Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI );
+            pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
+            startActivityForResult(pickContactIntent, CONTACT_PICKER_RESULT);
+        }
+    };
+
+    AdapterView.OnItemSelectedListener mOnSelectWidgetClickAction = new AdapterView.OnItemSelectedListener(){
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            widgetClickActionSelection = pos;
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            //skip
+        }
+    };
+
+    OnClickListener mOnAddClickListener = new View.OnClickListener() {
+        @Override
         public void onClick(View v) {
             final Context context = DirectSmsHomeWidgetConfigureActivity.this;
 
-            // When the button is clicked, store the string locally
-            //String widgetText = mAppWidgetText.getText().toString();
-            //saveTitlePref(context,mAppWidgetId,widgetText);
+            //Read all settings
+            WidgetSetting setting = new WidgetSetting();
+            setting.phoneNumber = ((TextView)findViewById(R.id.editPhone)).getText().toString();
+            setting.title = ((TextView)findViewById(R.id.editTitle)).getText().toString();
+            setting.message = ((TextView)findViewById(R.id.editMessage)).getText().toString();
+            setting.clickAction = widgetClickActionSelection;
 
+            //Stop if any are empty
+            if (setting.phoneNumber.isEmpty()) {
+                Toast.makeText(v.getContext(), "Phone number not entered", Toast.LENGTH_SHORT);
+                return;
+            }
+            if (setting.title.isEmpty()) {
+                Toast.makeText(v.getContext(), "Title not entered", Toast.LENGTH_SHORT);
+                return;
+            }
+            if (setting.message.isEmpty()) {
+                Toast.makeText(v.getContext(), "Message not entered", Toast.LENGTH_SHORT);
+                return;
+            }
+
+            WidgetSettingsFactory.save(context, mAppWidgetId, setting);
             // It is the responsibility of the configuration activity to update the app widget
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            //AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             //DirectSmsHomeWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId);
 
             // Make sure we pass back the original appWidgetId
@@ -94,30 +120,28 @@ public class DirectSmsHomeWidgetConfigureActivity extends Activity {
         }
     };
 
-    // Write the prefix to the SharedPreferences object for this widget
-    static void saveTitlePref(Context context, int appWidgetId, String text) {
-        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        prefs.putString(PREF_PREFIX_KEY + appWidgetId, text);
-        prefs.commit();
-    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CONTACT_PICKER_RESULT)
+        {
+            if(resultCode == RESULT_OK)
+            {
+                Uri contactURI = data.getData();
 
-    // Read the prefix from the SharedPreferences object for this widget.
-    // If there is no preference saved, get the default from a resource
-    static String loadTitlePref(Context context, int appWidgetId) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        String titleValue = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
-        if (titleValue != null) {
-            return titleValue;
-        } else {
-            return context.getString(R.string.appwidget_text);
+                Cursor cursor = getContentResolver().query(contactURI, null, null, null, null);
+                Boolean numbersExist = cursor.moveToFirst();
+                if (!numbersExist)
+                    return;
+                String phoneNumber = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                String displayName = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+
+                ((TextView)findViewById(R.id.editPhone)).setText(phoneNumber);
+                ((TextView)findViewById(R.id.editTitle)).setText(displayName);
+            }
         }
     }
 
-    static void deleteTitlePref(Context context, int appWidgetId) {
-        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        prefs.remove(PREF_PREFIX_KEY + appWidgetId);
-        prefs.commit();
-    }
 }
 
 

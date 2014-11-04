@@ -3,6 +3,7 @@ package rkr.directsmswidget;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -38,7 +39,7 @@ public class DirectSmsHomeWidget extends AppWidgetProvider {
         // When the user deletes the widget, delete the preference associated with it.
         final int N = appWidgetIds.length;
         for (int i=0; i<N; i++) {
-            DirectSmsHomeWidgetConfigureActivity.deleteTitlePref(context, appWidgetIds[i]);
+            WidgetSettingsFactory.delete(context, appWidgetIds[i]);
         }
     }
 
@@ -54,11 +55,19 @@ public class DirectSmsHomeWidget extends AppWidgetProvider {
 
     void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
 
-        CharSequence widgetText = DirectSmsHomeWidgetConfigureActivity.loadTitlePref(context, appWidgetId);
+        WidgetSetting setting = WidgetSettingsFactory.load(context, appWidgetId);
+        if (setting == null) {
+            Log.e("rkr.directsmswidget", "reading settings file failed");
+            return;
+        }
+        String widgetText = setting.title;
+
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.direct_sms_home_widget);
+
         views.setOnClickPendingIntent(R.id.appwidget_text, getPendingSelfIntent(context, CLICK_ACTION));
         views.setOnClickPendingIntent(R.id.appwidget_frame, getPendingSelfIntent(context, CLICK_ACTION));
+
         views.setTextViewText(R.id.appwidget_text, widgetText);
 
         // Instruct the widget manager to update the widget
