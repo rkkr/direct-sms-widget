@@ -8,7 +8,7 @@
     <string name="configure_title">Set widget title</string>
     <string name="configure_message">Enter text message</string>
     <string name="configure_click_action">Widget click action</string>
-    <string name="add_widget">Add widget</string>
+    <string name="add_widget">Save</string>
 
     <string-array name="itemsClickAction">
         <item>No confirmation</item>

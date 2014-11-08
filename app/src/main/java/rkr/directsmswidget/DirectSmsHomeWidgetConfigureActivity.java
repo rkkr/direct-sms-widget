@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,10 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.provider.ContactsContract;
-import android.widget.EditText;
-import android.widget.RemoteViews;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,9 +51,26 @@ public class DirectSmsHomeWidgetConfigureActivity extends Activity {
 
         // If this activity was started with an intent without an app widget ID, finish with an error.
         if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+            Log.e("rkr.directsmswidget.widgetconfigureactivity", "WidgetID not found in intent, canceling load");
             finish();
             return;
         }
+
+        if (getIntent().getExtras().getBoolean("loadExisting", false))
+        {
+            WidgetSetting setting = WidgetSettingsFactory.load(this.getApplicationContext(), mAppWidgetId);
+            fillSettingsWindow(setting);
+        }
+    }
+
+    private void fillSettingsWindow(WidgetSetting setting)
+    {
+        ((TextView)findViewById(R.id.editPhone)).setText(setting.phoneNumber);
+        ((TextView)findViewById(R.id.editTitle)).setText(setting.title);
+        ((TextView)findViewById(R.id.editMessage)).setText(setting.message);
+        ((Spinner)findViewById(R.id.cboClickAction)).setSelection(setting.clickAction);
+        Log.i("rkr.directsmswidget.configureactivity", "Item " + setting.clickAction + " loaded");
+        widgetClickActionSelection = setting.clickAction;
     }
 
     OnClickListener mOnSelectContactClickListener = new OnClickListener() {
@@ -72,6 +85,7 @@ public class DirectSmsHomeWidgetConfigureActivity extends Activity {
     AdapterView.OnItemSelectedListener mOnSelectWidgetClickAction = new AdapterView.OnItemSelectedListener(){
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            Log.i("rkr.directsmswidget.configureactivity", "Item " + pos + " selected");
             widgetClickActionSelection = pos;
         }
 
@@ -95,15 +109,15 @@ public class DirectSmsHomeWidgetConfigureActivity extends Activity {
 
             //Stop if any are empty
             if (setting.phoneNumber.isEmpty()) {
-                Toast.makeText(v.getContext(), "Phone number not entered", Toast.LENGTH_SHORT);
+                Toast.makeText(v.getContext(), "Phone number not entered", Toast.LENGTH_SHORT).show();
                 return;
             }
             if (setting.title.isEmpty()) {
-                Toast.makeText(v.getContext(), "Title not entered", Toast.LENGTH_SHORT);
+                Toast.makeText(v.getContext(), "Title not entered", Toast.LENGTH_SHORT).show();
                 return;
             }
             if (setting.message.isEmpty()) {
-                Toast.makeText(v.getContext(), "Message not entered", Toast.LENGTH_SHORT);
+                Toast.makeText(v.getContext(), "Message not entered", Toast.LENGTH_SHORT).show();
                 return;
             }
 

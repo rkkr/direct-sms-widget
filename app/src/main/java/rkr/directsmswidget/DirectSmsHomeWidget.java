@@ -3,6 +3,7 @@ package rkr.directsmswidget;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.app.PendingIntent;
@@ -57,7 +58,7 @@ public class DirectSmsHomeWidget extends AppWidgetProvider {
 
         WidgetSetting setting = WidgetSettingsFactory.load(context, appWidgetId);
         if (setting == null) {
-            Log.e("rkr.directsmswidget", "reading settings file failed");
+            Log.e("rkr.directsmswidget.smshomewidget", "Reading settings file failed");
             return;
         }
         String widgetText = setting.title;
@@ -65,8 +66,8 @@ public class DirectSmsHomeWidget extends AppWidgetProvider {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.direct_sms_home_widget);
 
-        views.setOnClickPendingIntent(R.id.appwidget_text, getPendingSelfIntent(context, CLICK_ACTION));
-        views.setOnClickPendingIntent(R.id.appwidget_frame, getPendingSelfIntent(context, CLICK_ACTION));
+        views.setOnClickPendingIntent(R.id.appwidget_text, getPendingSelfIntent(context, CLICK_ACTION, appWidgetId));
+        views.setOnClickPendingIntent(R.id.appwidget_frame, getPendingSelfIntent(context, CLICK_ACTION, appWidgetId));
 
         views.setTextViewText(R.id.appwidget_text, widgetText);
 
@@ -74,10 +75,11 @@ public class DirectSmsHomeWidget extends AppWidgetProvider {
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
-    protected PendingIntent getPendingSelfIntent(Context context, String action) {
+    protected PendingIntent getPendingSelfIntent(Context context, String action, int appWidgetId) {
         Intent intent = new Intent(context, getClass());
         intent.setAction(action);
-        return PendingIntent.getBroadcast(context, 0, intent, 0);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
     }
 }
 
