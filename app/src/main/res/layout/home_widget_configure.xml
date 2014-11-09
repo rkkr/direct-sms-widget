@@ -69,11 +69,4 @@
         android:entries="@array/itemsClickAction"
         android:layout_marginBottom="12dp"/>
 
-    <Button
-        android:id="@+id/add_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/add_widget"
-        android:layout_marginBottom="12dp" />
-
 </LinearLayout>

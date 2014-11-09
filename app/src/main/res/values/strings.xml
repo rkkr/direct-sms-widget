@@ -2,18 +2,20 @@
 <resources>
 
     <string name="app_name">Direct SMS Widget</string>
-    <string name="appwidget_text">EXAMPLE</string>
+    <string name="appwidget_header">Direct SMS</string>
     <string name="select_phone">Select</string>
-    <string name="configure_phone">Enter Phone number</string>
-    <string name="configure_title">Set widget title</string>
-    <string name="configure_message">Enter text message</string>
-    <string name="configure_click_action">Widget click action</string>
-    <string name="add_widget">Save</string>
+    <string name="configure_phone">Phone Number</string>
+    <string name="configure_title">Widget Title</string>
+    <string name="configure_message">Text Message</string>
+    <string name="configure_click_action">Widget Click Action</string>
 
     <string-array name="itemsClickAction">
         <item>No confirmation</item>
         <item>Show confirmation</item>
         <item>Open SMS application</item>
     </string-array>
+
+    <string name="title_activity_send_confirmation">Direct SMS Widget</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

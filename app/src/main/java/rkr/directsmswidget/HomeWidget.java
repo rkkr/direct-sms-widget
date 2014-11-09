@@ -3,20 +3,14 @@ package rkr.directsmswidget;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
-import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.app.PendingIntent;
 import android.content.Intent;
 
-/**
- * Implementation of App Widget functionality.
- * App Widget Configuration implemented in {@link DirectSmsHomeWidgetConfigureActivity DirectSmsHomeWidgetConfigureActivity}
- */
-public class DirectSmsHomeWidget extends AppWidgetProvider {
+public class HomeWidget extends AppWidgetProvider {
 
     public static String CLICK_ACTION = "rkr.directsmswidget.intent.action.Click";
-
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -51,7 +45,7 @@ public class DirectSmsHomeWidget extends AppWidgetProvider {
 
     @Override
     public void onDisabled(Context context) {
-        // Enter relevant functionality for when the last widget is disabled
+        WidgetSettingsFactory.deleteAll(context);
     }
 
     void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
@@ -64,10 +58,11 @@ public class DirectSmsHomeWidget extends AppWidgetProvider {
         String widgetText = setting.title;
 
         // Construct the RemoteViews object
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.direct_sms_home_widget);
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.home_widget);
 
         views.setOnClickPendingIntent(R.id.appwidget_text, getPendingSelfIntent(context, CLICK_ACTION, appWidgetId));
         views.setOnClickPendingIntent(R.id.appwidget_frame, getPendingSelfIntent(context, CLICK_ACTION, appWidgetId));
+        views.setOnClickPendingIntent(R.id.appwidget_header, getPendingSelfIntent(context, CLICK_ACTION, appWidgetId));
 
         views.setTextViewText(R.id.appwidget_text, widgetText);
 

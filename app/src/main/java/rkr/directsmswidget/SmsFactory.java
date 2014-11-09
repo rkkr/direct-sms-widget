@@ -2,6 +2,7 @@ package rkr.directsmswidget;
 
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,20 +27,13 @@ public class SmsFactory {
         switch (setting.clickAction)
         {
             case 0:
-                doSend(context, setting);
+                Send(context, setting);
                 break;
             case 1:
-                //Doesn't work
-                //Need to create custom dialog
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage("Send message to " + setting.phoneNumber + "?");
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        doSend(context, setting);
-                    }
-                });
-                builder.setNegativeButton("No", null);
-                builder.create().show();
+                Intent confirmationIntent = new Intent(context, SendConfirmationActivity.class);
+                confirmationIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+                confirmationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(confirmationIntent);
                 break;
             case 2:
                 Intent smsIntent = new Intent(Intent.ACTION_VIEW);
@@ -54,7 +48,7 @@ public class SmsFactory {
         }
     }
 
-    private static void doSend(Context context, WidgetSetting setting)
+    public static void Send(Context context, WidgetSetting setting)
     {
         Intent sentIntent = new Intent("message_sent");
         PendingIntent sentPI = PendingIntent.getBroadcast(context, 0, sentIntent, PendingIntent.FLAG_UPDATE_CURRENT);

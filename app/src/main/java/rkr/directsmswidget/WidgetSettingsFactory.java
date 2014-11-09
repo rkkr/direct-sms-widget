@@ -27,7 +27,6 @@ public class WidgetSettingsFactory {
 
     private static Map<String, ?> loadAllSettings(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        //Map<String, String> settings = (Map<String, String>) prefs.getAll();
         Map<String, ?> settings = prefs.getAll();
         return settings;
     }
@@ -37,7 +36,6 @@ public class WidgetSettingsFactory {
         Set<Integer> widgetIds = new HashSet<Integer>();
 
         for (String key : settings.keySet()) {
-            //Log.i("Setting keys", key);
             widgetIds.add(Integer.parseInt(key.substring(0, key.indexOf("_"))));
         }
         return widgetIds;
@@ -64,6 +62,12 @@ public class WidgetSettingsFactory {
         prefs.remove(appWidgetId + "_phoneNumber");
         prefs.remove(appWidgetId + "_clickAction");
         prefs.remove(appWidgetId + "_message");
+        prefs.commit();
+    }
+
+    static void deleteAll(Context context) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit();
+        prefs.clear();
         prefs.commit();
     }
 }

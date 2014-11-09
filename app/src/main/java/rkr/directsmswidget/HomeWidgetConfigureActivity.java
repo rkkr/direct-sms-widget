@@ -8,6 +8,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -16,18 +19,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-
-/**
- * The configuration screen for the {@link DirectSmsHomeWidget DirectSmsHomeWidget} AppWidget.
- */
-public class DirectSmsHomeWidgetConfigureActivity extends Activity {
+public class HomeWidgetConfigureActivity extends Activity {
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     private static final int CONTACT_PICKER_RESULT = 1;
     private static int widgetClickActionSelection = 0;
 
-    public DirectSmsHomeWidgetConfigureActivity() {
+    public HomeWidgetConfigureActivity() {
         super();
     }
 
@@ -40,11 +38,10 @@ public class DirectSmsHomeWidgetConfigureActivity extends Activity {
         setResult(RESULT_CANCELED);
 
         //Open view
-        setContentView(R.layout.direct_sms_home_widget_configure);
+        setContentView(R.layout.home_widget_configure);
 
         //Button handlers
         findViewById(R.id.btn_select).setOnClickListener(mOnSelectContactClickListener);
-        findViewById(R.id.add_button).setOnClickListener(mOnAddClickListener);
         ((Spinner)findViewById(R.id.cboClickAction)).setOnItemSelectedListener(mOnSelectWidgetClickAction);
 
         mAppWidgetId = Helpers.IntentToWidgetId(getIntent());
@@ -61,6 +58,22 @@ public class DirectSmsHomeWidgetConfigureActivity extends Activity {
             WidgetSetting setting = WidgetSettingsFactory.load(this.getApplicationContext(), mAppWidgetId);
             fillSettingsWindow(setting);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.settings_activity_actions, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_save)
+            mOnAddClickListener(this.getApplicationContext());
+        else
+            return super.onOptionsItemSelected(item);
+        return true;
     }
 
     private void fillSettingsWindow(WidgetSetting setting)
@@ -95,44 +108,45 @@ public class DirectSmsHomeWidgetConfigureActivity extends Activity {
         }
     };
 
-    OnClickListener mOnAddClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            final Context context = DirectSmsHomeWidgetConfigureActivity.this;
+    private void mOnAddClickListener(Context context) {
+        //Read all settings
+        WidgetSetting setting = new WidgetSetting();
+        setting.phoneNumber = ((TextView)findViewById(R.id.editPhone)).getText().toString();
+        setting.title = ((TextView)findViewById(R.id.editTitle)).getText().toString();
+        setting.message = ((TextView)findViewById(R.id.editMessage)).getText().toString();
+        setting.clickAction = widgetClickActionSelection;
 
-            //Read all settings
-            WidgetSetting setting = new WidgetSetting();
-            setting.phoneNumber = ((TextView)findViewById(R.id.editPhone)).getText().toString();
-            setting.title = ((TextView)findViewById(R.id.editTitle)).getText().toString();
-            setting.message = ((TextView)findViewById(R.id.editMessage)).getText().toString();
-            setting.clickAction = widgetClickActionSelection;
-
-            //Stop if any are empty
-            if (setting.phoneNumber.isEmpty()) {
-                Toast.makeText(v.getContext(), "Phone number not entered", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (setting.title.isEmpty()) {
-                Toast.makeText(v.getContext(), "Title not entered", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (setting.message.isEmpty()) {
-                Toast.makeText(v.getContext(), "Message not entered", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            WidgetSettingsFactory.save(context, mAppWidgetId, setting);
-            // It is the responsibility of the configuration activity to update the app widget
-            //AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            //DirectSmsHomeWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId);
-
-            // Make sure we pass back the original appWidgetId
-            Intent resultValue = new Intent();
-            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-            setResult(RESULT_OK, resultValue);
-            finish();
+        //Stop if any are empty
+        if (setting.phoneNumber.isEmpty()) {
+            Toast.makeText(context, "Phone number not entered", Toast.LENGTH_SHORT).show();
+            return;
         }
-    };
+        if (setting.title.isEmpty()) {
+            Toast.makeText(context, "Title not entered", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (setting.message.isEmpty()) {
+            Toast.makeText(context, "Message not entered", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        WidgetSettingsFactory.save(context, mAppWidgetId, setting);
+
+        //Update the widget manually if it exists
+        //if (getIntent().getExtras().getBoolean("loadExisting", false)) {
+            Intent intent = new Intent(context, HomeWidget.class);
+            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            int[] widgetIds = {mAppWidgetId};
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds);
+            sendBroadcast(intent);
+        //}
+
+        // Make sure we pass back the original appWidgetId
+        Intent resultValue = new Intent();
+        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+        setResult(RESULT_OK, resultValue);
+        finish();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
