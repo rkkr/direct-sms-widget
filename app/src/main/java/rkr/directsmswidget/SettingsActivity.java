@@ -8,9 +8,6 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 
-
-import java.util.Set;
-
 public class SettingsActivity extends PreferenceActivity {
 
     @Override
