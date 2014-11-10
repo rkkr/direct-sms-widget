@@ -1,6 +1,7 @@
 package rkr.directsmswidget;
 
 import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -25,9 +26,10 @@ public class SettingsActivity extends PreferenceActivity {
     private void CreateHomeWidgets() {
         PreferenceGroup homeWidgetsSection = (PreferenceGroup)getPreferenceManager().findPreference("HomeScreenSettings");
 
-        Set<Integer> widgetIds = WidgetSettingsFactory.getWidgetIds(this.getApplicationContext());
+        //Set<Integer> widgetIds = WidgetSettingsFactory.getWidgetIds(this.getApplicationContext());
+        int[] widgetIds = AppWidgetManager.getInstance(this).getAppWidgetIds(new ComponentName(this, HomeWidget.class));
 
-        if (widgetIds.size() == 0)
+        if (widgetIds.length == 0)
         {
             String helpText = "Widgets you add will appear here";
             Preference pref = new Preference(this.getApplicationContext());

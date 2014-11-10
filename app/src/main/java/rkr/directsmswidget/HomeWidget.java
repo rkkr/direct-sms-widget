@@ -15,7 +15,7 @@ public class HomeWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        if (intent.getAction().equals(CLICK_ACTION)) {
+        if (intent.getAction().startsWith(CLICK_ACTION)) {
             SmsFactory.SendForWidget(context, intent);
         }
     }
@@ -72,7 +72,7 @@ public class HomeWidget extends AppWidgetProvider {
 
     protected PendingIntent getPendingSelfIntent(Context context, String action, int appWidgetId) {
         Intent intent = new Intent(context, getClass());
-        intent.setAction(action);
+        intent.setAction(action + "_" + appWidgetId);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
     }
