@@ -134,12 +134,21 @@ public class HomeWidgetConfigureActivity extends Activity {
 
         //Update the widget manually if it exists
         //if (getIntent().getExtras().getBoolean("loadExisting", false)) {
-            Intent intent = new Intent(context, HomeWidget.class);
-            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-            int[] widgetIds = {mAppWidgetId};
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds);
-            sendBroadcast(intent);
+        //Widget update event needs to be called explicitly
+        //Sending broadcast to update all widgets as it is created at this time
+        Intent intent = new Intent(context, HomeWidget.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        int[] widgetIds = {mAppWidgetId};
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds);
+        sendBroadcast(intent);
         //}
+
+        if (getIntent().getExtras().getBoolean("loadExisting", false)) {
+            Intent settingsUpdateIntent = new Intent();
+            settingsUpdateIntent.setAction(AppSettingsActivity.refreshAction);
+            settingsUpdateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+            sendBroadcast(settingsUpdateIntent);
+        }
 
         // Make sure we pass back the original appWidgetId
         Intent resultValue = new Intent();

@@ -1,14 +1,19 @@
 package rkr.directsmswidget;
 
 import android.appwidget.AppWidgetManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 
-public class SettingsActivity extends PreferenceActivity {
+public class AppSettingsActivity extends PreferenceActivity {
+
+    public static String refreshAction = "rkr.directsmsmessage.appsettingsactivity.refreshwidgetlist";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -17,22 +22,25 @@ public class SettingsActivity extends PreferenceActivity {
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.settings_main);
 
+        IntentFilter filter = new IntentFilter(refreshAction);
+        registerReceiver(broadcastReceiver, filter);
+
         CreateHomeWidgets();
     }
 
-    private void CreateHomeWidgets() {
-        PreferenceGroup homeWidgetsSection = (PreferenceGroup)getPreferenceManager().findPreference("HomeScreenSettings");
+    @Override
+    public void onDestroy() {
+        unregisterReceiver(broadcastReceiver);
+        super.onDestroy();
+    }
 
-        //Set<Integer> widgetIds = WidgetSettingsFactory.getWidgetIds(this.getApplicationContext());
+    public void CreateHomeWidgets() {
+        PreferenceGroup homeWidgetsSection = (PreferenceGroup)getPreferenceManager().findPreference("HomeScreenSettings");
         int[] widgetIds = AppWidgetManager.getInstance(this).getAppWidgetIds(new ComponentName(this, HomeWidget.class));
 
-        if (widgetIds.length == 0)
-        {
-            String helpText = "Widgets you add will appear here";
-            Preference pref = new Preference(this.getApplicationContext());
-            pref.setTitle(helpText);
-            homeWidgetsSection.addPreference(pref);
-        }
+        //Keep the help text if no widgets are found
+        if (widgetIds.length > 0)
+            homeWidgetsSection.removeAll();
 
         for (Integer widgetId : widgetIds)
         {
@@ -48,4 +56,11 @@ public class SettingsActivity extends PreferenceActivity {
             homeWidgetsSection.addPreference(pref);
         }
     }
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            CreateHomeWidgets();
+        }
+    };
 }

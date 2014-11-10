@@ -50,9 +50,6 @@ public class WidgetSettingsFactory {
         setting.message = prefs.getString(appWidgetId + "_message", null);
         setting.clickAction = prefs.getInt(appWidgetId + "_clickAction", 0);
 
-        //if (setting.phoneNumber == null || setting.title == null)
-        //    return null;
-
         return setting;
     }
 
