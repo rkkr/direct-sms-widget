@@ -55,7 +55,7 @@ public class HomeWidget extends AppWidgetProvider {
             Log.e("rkr.directsmswidget.smshomewidget", "Reading settings file failed");
             return;
         }
-        String widgetText = setting.title;
+        String widgetText = setting.title == "" ? setting.contactName : setting.title;
 
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.home_widget);

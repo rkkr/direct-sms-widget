@@ -11,7 +11,8 @@
         android:title="Edit Home Screen Widgets">
 
         <Preference
-            android:title="Widgets you add will appear here"/>
+            android:title="Widgets you add will appear here"
+            android:selectable="false"/>
 
     </PreferenceCategory>
 </PreferenceScreen>

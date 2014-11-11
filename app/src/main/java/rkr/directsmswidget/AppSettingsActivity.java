@@ -1,5 +1,6 @@
 package rkr.directsmswidget;
 
+import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -45,8 +46,16 @@ public class AppSettingsActivity extends PreferenceActivity {
         for (Integer widgetId : widgetIds)
         {
             WidgetSetting setting = WidgetSettingsFactory.load(this.getApplicationContext(), widgetId);
+            if (setting == null)
+            {
+                //Cleanup all zombie widgets
+                AppWidgetHost host = new AppWidgetHost(this.getApplicationContext(), 1);
+                host.deleteAppWidgetId(widgetId);
+                continue;
+            }
+
             Preference pref = new Preference(this.getApplicationContext());
-            pref.setTitle(setting.title);
+            pref.setTitle(setting.title == "" ? setting.contactName : setting.title);
 
             Intent intent = new Intent(this.getApplicationContext(), HomeWidgetConfigureActivity.class);
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);

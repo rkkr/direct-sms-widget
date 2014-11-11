@@ -20,6 +20,7 @@ public class WidgetSettingsFactory {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit();
         prefs.putString(appWidgetId + "_title", setting.title);
         prefs.putString(appWidgetId + "_message", setting.message);
+        prefs.putString(appWidgetId + "_contactName", setting.contactName);
         prefs.putString(appWidgetId + "_phoneNumber", setting.phoneNumber);
         prefs.putInt(appWidgetId + "_clickAction", setting.clickAction);
         prefs.commit();
@@ -46,8 +47,12 @@ public class WidgetSettingsFactory {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         WidgetSetting setting = new WidgetSetting();
         setting.phoneNumber = prefs.getString(appWidgetId + "_phoneNumber", null);
+        if (setting.phoneNumber == null)
+            return null;
+
         setting.title = prefs.getString(appWidgetId + "_title", null);
         setting.message = prefs.getString(appWidgetId + "_message", null);
+        setting.contactName = prefs.getString(appWidgetId + "_contactName", null);
         setting.clickAction = prefs.getInt(appWidgetId + "_clickAction", 0);
 
         return setting;
@@ -57,6 +62,7 @@ public class WidgetSettingsFactory {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit();
         prefs.remove(appWidgetId + "_title");
         prefs.remove(appWidgetId + "_phoneNumber");
+        prefs.remove(appWidgetId + "_contactName");
         prefs.remove(appWidgetId + "_clickAction");
         prefs.remove(appWidgetId + "_message");
         prefs.commit();

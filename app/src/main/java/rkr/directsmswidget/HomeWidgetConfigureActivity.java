@@ -1,6 +1,7 @@
 package rkr.directsmswidget;
 
 import android.app.Activity;
+import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -79,6 +80,7 @@ public class HomeWidgetConfigureActivity extends Activity {
     private void fillSettingsWindow(WidgetSetting setting)
     {
         ((TextView)findViewById(R.id.editPhone)).setText(setting.phoneNumber);
+        ((TextView)findViewById(R.id.editTitle)).setHint(setting.contactName);
         ((TextView)findViewById(R.id.editTitle)).setText(setting.title);
         ((TextView)findViewById(R.id.editMessage)).setText(setting.message);
         ((Spinner)findViewById(R.id.cboClickAction)).setSelection(setting.clickAction);
@@ -112,6 +114,8 @@ public class HomeWidgetConfigureActivity extends Activity {
         //Read all settings
         WidgetSetting setting = new WidgetSetting();
         setting.phoneNumber = ((TextView)findViewById(R.id.editPhone)).getText().toString();
+        CharSequence contactName = ((TextView)findViewById(R.id.editTitle)).getHint();
+        setting.contactName = contactName == null ? "" : contactName.toString();
         setting.title = ((TextView)findViewById(R.id.editTitle)).getText().toString();
         setting.message = ((TextView)findViewById(R.id.editMessage)).getText().toString();
         setting.clickAction = widgetClickActionSelection;
@@ -119,10 +123,6 @@ public class HomeWidgetConfigureActivity extends Activity {
         //Stop if any are empty
         if (setting.phoneNumber.isEmpty()) {
             Toast.makeText(context, "Phone number not entered", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (setting.title.isEmpty()) {
-            Toast.makeText(context, "Title not entered", Toast.LENGTH_SHORT).show();
             return;
         }
         if (setting.message.isEmpty()) {
@@ -174,7 +174,7 @@ public class HomeWidgetConfigureActivity extends Activity {
                 String displayName = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
 
                 ((TextView)findViewById(R.id.editPhone)).setText(phoneNumber);
-                ((TextView)findViewById(R.id.editTitle)).setText(displayName);
+                ((TextView)findViewById(R.id.editTitle)).setHint(displayName);
             }
         }
     }
