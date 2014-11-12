@@ -55,7 +55,7 @@ public class AppSettingsActivity extends PreferenceActivity {
             }
 
             Preference pref = new Preference(this.getApplicationContext());
-            pref.setTitle(setting.title == "" ? setting.contactName : setting.title);
+            pref.setTitle(setting.getWidgetTitle());
 
             Intent intent = new Intent(this.getApplicationContext(), HomeWidgetConfigureActivity.class);
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
