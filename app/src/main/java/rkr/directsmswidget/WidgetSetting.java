@@ -6,6 +6,8 @@ public class WidgetSetting {
     public String title;
     public String message;
     public int clickAction;
+    public int backgroundColor;
+    public int textColor;
 
     public String getWidgetTitle() {
         if (this.title != null && this.title != "")

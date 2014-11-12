@@ -20,11 +20,23 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.colorpicker.ColorPickerDialog;
+import com.android.colorpicker.ColorPickerSwatch;
+
 public class HomeWidgetConfigureActivity extends Activity {
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     private static final int CONTACT_PICKER_RESULT = 1;
     private static int widgetClickActionSelection = 0;
+    private static int mSelectedColorBackground = 0xff33b5e5;
+    private static int mSelectedColorText = 0xffffffff;
+
+    final static int[] mColors = new int[] {
+            0xff33b5e5, 0xffaa66cc, 0xff99cc00,
+            0xffffbb33, 0xffff4444, 0xff0099cc,
+            0xff9933cc, 0xff669900, 0xffff8800,
+            0xffcc0000, 0xffeeeeee, 0xffffffff
+    };
 
     public HomeWidgetConfigureActivity() {
         super();
@@ -43,6 +55,8 @@ public class HomeWidgetConfigureActivity extends Activity {
 
         //Button handlers
         findViewById(R.id.btn_select_contact).setOnClickListener(mOnSelectContactClickListener);
+        findViewById(R.id.button_select_color_text).setOnClickListener(mOnSelectWidgetTextColorClickListener);
+        findViewById(R.id.button_select_color_background).setOnClickListener(mOnSelectWidgetBackgroundColorClickListener);
         ((Spinner)findViewById(R.id.cboClickAction)).setOnItemSelectedListener(mOnSelectWidgetClickAction);
 
         mAppWidgetId = Helpers.IntentToWidgetId(getIntent());
@@ -84,9 +98,59 @@ public class HomeWidgetConfigureActivity extends Activity {
         ((TextView)findViewById(R.id.editTitle)).setText(setting.title);
         ((TextView)findViewById(R.id.editMessage)).setText(setting.message);
         ((Spinner)findViewById(R.id.cboClickAction)).setSelection(setting.clickAction);
-        Log.i("rkr.directsmswidget.configureactivity", "Item " + setting.clickAction + " loaded");
+        ((TextView)findViewById(R.id.text_sample_widget)).setTextColor(setting.textColor);
+        findViewById(R.id.text_sample_widget).setBackgroundColor(setting.backgroundColor);
+
+        mSelectedColorBackground = setting.backgroundColor;
+        mSelectedColorText = setting.textColor;
         widgetClickActionSelection = setting.clickAction;
     }
+
+    OnClickListener mOnSelectWidgetBackgroundColorClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ColorPickerDialog colorCalendar = ColorPickerDialog.newInstance(
+                    R.string.color_picker_default_title,
+                    mColors,
+                    mSelectedColorBackground,
+                    4,
+                    ColorPickerDialog.SIZE_SMALL);
+
+            colorCalendar.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener(){
+                @Override
+                public void onColorSelected(int color) {
+                    mSelectedColorBackground=color;
+                    findViewById(R.id.text_sample_widget).setBackgroundColor(mSelectedColorBackground);
+                }
+
+            });
+
+            colorCalendar.show(getFragmentManager(), "cal");
+        }
+    };
+
+    OnClickListener mOnSelectWidgetTextColorClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ColorPickerDialog colorCalendar = ColorPickerDialog.newInstance(
+                    R.string.color_picker_default_title,
+                    mColors,
+                    mSelectedColorText,
+                    4,
+                    ColorPickerDialog.SIZE_SMALL);
+
+            colorCalendar.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener(){
+                @Override
+                public void onColorSelected(int color) {
+                    mSelectedColorText = color;
+                    ((TextView)findViewById(R.id.text_sample_widget)).setTextColor(mSelectedColorText);
+                }
+
+            });
+
+            colorCalendar.show(getFragmentManager(), "cal");
+        }
+    };
 
     OnClickListener mOnSelectContactClickListener = new OnClickListener() {
         @Override
@@ -118,6 +182,8 @@ public class HomeWidgetConfigureActivity extends Activity {
         setting.contactName = contactName == null ? "" : contactName.toString();
         setting.title = ((TextView)findViewById(R.id.editTitle)).getText().toString();
         setting.message = ((TextView)findViewById(R.id.editMessage)).getText().toString();
+        setting.backgroundColor = mSelectedColorBackground;
+        setting.textColor = mSelectedColorText;
         setting.clickAction = widgetClickActionSelection;
 
         //Stop if any are empty

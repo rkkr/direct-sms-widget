@@ -65,6 +65,8 @@ public class HomeWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.appwidget_header, getPendingSelfIntent(context, CLICK_ACTION, appWidgetId));
 
         views.setTextViewText(R.id.appwidget_text, widgetText);
+        views.setTextColor(R.id.appwidget_text, setting.textColor);
+        views.setInt(R.id.appwidget_text, "setBackgroundColor", setting.backgroundColor);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);

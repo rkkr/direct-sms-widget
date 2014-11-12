@@ -23,6 +23,8 @@ public class WidgetSettingsFactory {
         prefs.putString(appWidgetId + "_contactName", setting.contactName);
         prefs.putString(appWidgetId + "_phoneNumber", setting.phoneNumber);
         prefs.putInt(appWidgetId + "_clickAction", setting.clickAction);
+        prefs.putInt(appWidgetId + "_backgroundColor", setting.backgroundColor);
+        prefs.putInt(appWidgetId + "_textColor", setting.textColor);
         prefs.commit();
     }
 
@@ -54,6 +56,8 @@ public class WidgetSettingsFactory {
         setting.message = prefs.getString(appWidgetId + "_message", null);
         setting.contactName = prefs.getString(appWidgetId + "_contactName", null);
         setting.clickAction = prefs.getInt(appWidgetId + "_clickAction", 0);
+        setting.backgroundColor = prefs.getInt(appWidgetId + "_backgroundColor", 0xff33b5e5);
+        setting.textColor = prefs.getInt(appWidgetId + "_textColor", 0xffffffff);
 
         return setting;
     }
@@ -65,6 +69,8 @@ public class WidgetSettingsFactory {
         prefs.remove(appWidgetId + "_contactName");
         prefs.remove(appWidgetId + "_clickAction");
         prefs.remove(appWidgetId + "_message");
+        prefs.remove(appWidgetId + "_backgroundColor");
+        prefs.remove(appWidgetId + "_textColor");
         prefs.commit();
     }
 
