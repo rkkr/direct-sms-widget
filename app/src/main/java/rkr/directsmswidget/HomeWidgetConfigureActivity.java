@@ -42,7 +42,7 @@ public class HomeWidgetConfigureActivity extends Activity {
         setContentView(R.layout.home_widget_configure);
 
         //Button handlers
-        findViewById(R.id.btn_select).setOnClickListener(mOnSelectContactClickListener);
+        findViewById(R.id.btn_select_contact).setOnClickListener(mOnSelectContactClickListener);
         ((Spinner)findViewById(R.id.cboClickAction)).setOnItemSelectedListener(mOnSelectWidgetClickAction);
 
         mAppWidgetId = Helpers.IntentToWidgetId(getIntent());
