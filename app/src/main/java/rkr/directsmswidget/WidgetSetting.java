@@ -10,7 +10,7 @@ public class WidgetSetting {
     public int textColor;
 
     public String getWidgetTitle() {
-        if (this.title != null && this.title != "")
+        if (this.title != null && this.title.trim().length() > 0)
             return this.title;
 
         return this.contactName;
