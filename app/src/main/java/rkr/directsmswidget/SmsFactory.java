@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 public class SmsFactory {
 
+    static private boolean toastReceiverRegistered = false;
+
     public static void SendForWidget(final Context context, Intent intent){
         int widgetId = Helpers.IntentToWidgetId(intent);
         final WidgetSetting setting = WidgetSettingsFactory.load(context, widgetId);
@@ -50,12 +52,27 @@ public class SmsFactory {
 
     public static void Send(Context context, WidgetSetting setting)
     {
+        String phoneNumbers[] = setting.phoneNumber.split(";");
+        for (int i=0; i<phoneNumbers.length; i++)
+            Send(context, phoneNumbers[i], setting.message);
+    }
+
+    public static void Send(Context context, String phoneNumber, String message)
+    {
+        Send(context, phoneNumber, message, true);
+    }
+
+    public static void Send(Context context, String phoneNumber, String message, Boolean showToast)
+    {
         Intent sentIntent = new Intent("message_sent");
         PendingIntent sentPI = PendingIntent.getBroadcast(context, 0, sentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        context.getApplicationContext().registerReceiver(smsReceive, new IntentFilter("message_sent"));
+        if (!toastReceiverRegistered) {
+            context.getApplicationContext().registerReceiver(smsReceive, new IntentFilter("message_sent"));
+            toastReceiverRegistered = true;
+        }
 
         SmsManager smsManager = SmsManager.getDefault();
-        smsManager.sendTextMessage(setting.phoneNumber, null, setting.message, sentPI, null);
+        smsManager.sendTextMessage(phoneNumber, null, message, sentPI, null);
     }
 
     static BroadcastReceiver smsReceive = new BroadcastReceiver() {
