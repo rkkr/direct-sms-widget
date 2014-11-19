@@ -105,8 +105,8 @@ public class HomeWidgetConfigureActivity extends Activity {
 
     private void fillSettingsWindow(WidgetSetting setting)
     {
-        String[] phoneNumbers = setting.phoneNumber.split(";");
-        String[] contactsNames = setting.contactName.split(";");
+        String[] phoneNumbers = setting.phoneNumbers();
+        String[] contactsNames = setting.contactNames();
         for (int i=1; i<phoneNumbers.length; i++)
             mAddContactClickListener.onClick(null);
         for (int i=0; i<phoneNumbers.length; i++) {

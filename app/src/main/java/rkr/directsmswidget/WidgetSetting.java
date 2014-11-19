@@ -15,4 +15,12 @@ public class WidgetSetting {
 
         return this.contactName;
     }
+
+    public String[] phoneNumbers(){
+        return this.phoneNumber.split(";", -1);
+    }
+
+    public String[] contactNames(){
+        return this.contactName.split(";", -1);
+    }
 }
