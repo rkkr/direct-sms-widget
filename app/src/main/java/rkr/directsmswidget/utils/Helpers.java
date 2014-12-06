@@ -1,12 +1,16 @@
-package rkr.directsmswidget;
+package rkr.directsmswidget.utils;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.util.Random;
+
 public class Helpers {
-    static int IntentToWidgetId(Intent intent) {
+    private static Random rd = new Random();
+
+    public static int IntentToWidgetId(Intent intent) {
         Bundle extras = intent.getExtras();
         if (extras == null)
         {
@@ -17,5 +21,8 @@ public class Helpers {
         return extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
     }
 
+    public static int getRandInt(){
+        return Math.abs(rd.nextInt());
+    }
 
 }

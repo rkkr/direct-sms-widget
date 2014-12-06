@@ -11,6 +11,18 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
+import android.util.Pair;
+
+import java.util.ArrayList;
+import java.util.Map;
+
+import rkr.directsmswidget.activities.HomeWidgetConfigureActivity;
+import rkr.directsmswidget.activities.NotificationConfigureActivity;
+import rkr.directsmswidget.settings.NotificationSetting;
+import rkr.directsmswidget.widgets.HomeWidget;
+import rkr.directsmswidget.R;
+import rkr.directsmswidget.settings.SettingsFactory;
+import rkr.directsmswidget.settings.WidgetSetting;
 
 public class AppSettingsActivity extends PreferenceActivity {
 
@@ -27,6 +39,7 @@ public class AppSettingsActivity extends PreferenceActivity {
         registerReceiver(broadcastReceiver, filter);
 
         CreateHomeWidgets();
+        CreateNotifications();
     }
 
     @Override
@@ -45,7 +58,7 @@ public class AppSettingsActivity extends PreferenceActivity {
 
         for (Integer widgetId : widgetIds)
         {
-            WidgetSetting setting = WidgetSettingsFactory.load(this.getApplicationContext(), widgetId);
+            WidgetSetting setting = SettingsFactory.load(WidgetSetting.class, this.getApplicationContext(), widgetId);
             if (setting == null)
             {
                 //Cleanup all zombie widgets
@@ -66,10 +79,39 @@ public class AppSettingsActivity extends PreferenceActivity {
         }
     }
 
+    public void CreateNotifications()
+    {
+        PreferenceGroup notificationSection = (PreferenceGroup)getPreferenceManager().findPreference("NotificationSettings");
+        while(notificationSection.getPreferenceCount() > 1)
+            notificationSection.removePreference(notificationSection.getPreference(0));
+
+        //Add new button
+        Intent intent = new Intent(this.getApplicationContext(), NotificationConfigureActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        notificationSection.findPreference("NotificationSettingsNew").setIntent(intent);
+
+        //Load current notifications
+        Map<Integer ,NotificationSetting> notifications = SettingsFactory.loadAll(NotificationSetting.class, this);
+        for (Map.Entry<Integer, NotificationSetting> pair : notifications.entrySet())
+        {
+            Preference pref = new Preference(this.getApplicationContext());
+            pref.setOrder(1);
+            pref.setTitle(pair.getValue().getWidgetTitle());
+
+            intent = new Intent(this.getApplicationContext(), NotificationConfigureActivity.class);
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, pair.getKey());
+            intent.putExtra("loadExisting", true);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            pref.setIntent(intent);
+            notificationSection.addPreference(pref);
+        }
+    }
+
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             CreateHomeWidgets();
+            CreateNotifications();
         }
     };
 }

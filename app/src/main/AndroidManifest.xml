@@ -16,13 +16,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".HomeWidgetConfigureActivity" >
+        <activity android:name=".activities.HomeWidgetConfigureActivity" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
+        <activity android:name=".activities.NotificationConfigureActivity" />
 
-        <receiver android:name=".HomeWidget" >
+        <receiver android:name=".widgets.HomeWidget" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -34,7 +35,7 @@
 
         <activity
             android:theme="@android:style/Theme.Holo.Light.Dialog"
-            android:name=".SendConfirmationActivity"
+            android:name=".activities.SendConfirmationActivity"
             android:label="@string/title_activity_send_confirmation" >
         </activity>
     </application>

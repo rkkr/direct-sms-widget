@@ -1,18 +1,24 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--<PreferenceCategory
-        android:key="LockScreenSettings"
-        android:title="Lock Screen">
-
-    </PreferenceCategory>-->
-
     <PreferenceCategory
         android:key="HomeScreenSettings"
         android:title="Edit Home Screen Widgets">
 
         <Preference
-            android:title="Widgets you add will appear here"
+            android:title="Use your launcher to add widgets"
             android:selectable="false"/>
 
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="NotificationSettings"
+        android:title="Edit Notifications">
+
+        <Preference
+            android:title="Add new..."
+            android:order="2"
+            android:key="NotificationSettingsNew"/>
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

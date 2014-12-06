@@ -1,4 +1,4 @@
-package rkr.directsmswidget;
+package rkr.directsmswidget.widgets;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -7,6 +7,11 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.app.PendingIntent;
 import android.content.Intent;
+
+import rkr.directsmswidget.R;
+import rkr.directsmswidget.settings.SettingsFactory;
+import rkr.directsmswidget.settings.WidgetSetting;
+import rkr.directsmswidget.utils.SmsFactory;
 
 public class HomeWidget extends AppWidgetProvider {
 
@@ -34,7 +39,7 @@ public class HomeWidget extends AppWidgetProvider {
         // When the user deletes the widget, delete the preference associated with it.
         final int N = appWidgetIds.length;
         for (int i=0; i<N; i++) {
-            WidgetSettingsFactory.delete(context, appWidgetIds[i]);
+            SettingsFactory.delete(WidgetSetting.class, context, appWidgetIds[i]);
         }
     }
 
@@ -45,12 +50,12 @@ public class HomeWidget extends AppWidgetProvider {
 
     @Override
     public void onDisabled(Context context) {
-        WidgetSettingsFactory.deleteAll(context);
+        SettingsFactory.deleteAll(WidgetSetting.class, context);
     }
 
     void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
 
-        WidgetSetting setting = WidgetSettingsFactory.load(context, appWidgetId);
+        WidgetSetting setting = SettingsFactory.load(WidgetSetting.class, context, appWidgetId);
         if (setting == null) {
             Log.e("rkr.directsmswidget.smshomewidget", "Reading settings file failed");
             return;

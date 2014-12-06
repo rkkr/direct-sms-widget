@@ -1,11 +1,9 @@
-package rkr.directsmswidget;
+package rkr.directsmswidget.utils;
 
-import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.app.Activity;
 import android.content.IntentFilter;
@@ -13,13 +11,17 @@ import android.telephony.SmsManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import rkr.directsmswidget.activities.SendConfirmationActivity;
+import rkr.directsmswidget.settings.SettingsFactory;
+import rkr.directsmswidget.settings.WidgetSetting;
+
 public class SmsFactory {
 
     static private boolean toastReceiverRegistered = false;
 
     public static void SendForWidget(final Context context, Intent intent){
         int widgetId = Helpers.IntentToWidgetId(intent);
-        final WidgetSetting setting = WidgetSettingsFactory.load(context, widgetId);
+        final WidgetSetting setting = SettingsFactory.load(WidgetSetting.class, context, widgetId);
 
         if (setting == null || setting.phoneNumber == null || setting.message == null){
             Log.e("rkr.directsmswidget.smsfactory", "Reading settings file failed");

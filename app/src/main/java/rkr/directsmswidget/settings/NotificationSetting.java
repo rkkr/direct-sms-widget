@@ -1,13 +1,13 @@
-package rkr.directsmswidget;
+package rkr.directsmswidget.settings;
 
-public class WidgetSetting {
+public class NotificationSetting {
+    public static final String PREFS_NAME = "rkr.directsmswidget.NotificationPrefs";
+
     public String phoneNumber;
     public String contactName;
     public String title;
     public String message;
-    public int clickAction;
-    public int backgroundColor;
-    public int textColor;
+    public Integer clickAction;
 
     public String getWidgetTitle() {
         if (this.title != null && this.title.trim().length() > 0)

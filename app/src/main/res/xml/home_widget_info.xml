@@ -4,7 +4,7 @@
     android:minHeight="40dp"
     android:updatePeriodMillis="0"
     android:initialLayout="@layout/home_widget"
-    android:configure="rkr.directsmswidget.HomeWidgetConfigureActivity"
+    android:configure="rkr.directsmswidget.activities.HomeWidgetConfigureActivity"
     android:resizeMode="horizontal"
     android:widgetCategory="home_screen"
     android:initialKeyguardLayout="@layout/home_widget">

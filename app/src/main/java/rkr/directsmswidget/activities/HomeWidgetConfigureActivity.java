@@ -1,7 +1,6 @@
-package rkr.directsmswidget;
+package rkr.directsmswidget.activities;
 
 import android.app.Activity;
-import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -30,14 +29,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import rkr.directsmswidget.AppSettingsActivity;
+import rkr.directsmswidget.widgets.HomeWidget;
+import rkr.directsmswidget.R;
+import rkr.directsmswidget.settings.SettingsFactory;
+import rkr.directsmswidget.settings.WidgetSetting;
+import rkr.directsmswidget.utils.Helpers;
+
 public class HomeWidgetConfigureActivity extends Activity {
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-    private static int widgetClickActionSelection = 0;
+    public static int widgetClickActionSelection = 0;
     private static int mSelectedColorBackground = 0xff33b5e5;
     private static int mSelectedColorText = 0xffffffff;
 
-    private List<ContactRow> contactRows = new ArrayList<ContactRow>();
+    public List<ContactRow> contactRows = new ArrayList<ContactRow>();
     private static Random rand = new Random();
 
     final static int[] mColors = new int[] {
@@ -49,6 +55,11 @@ public class HomeWidgetConfigureActivity extends Activity {
 
     public HomeWidgetConfigureActivity() {
         super();
+    }
+
+    public void passOnCreate(Bundle icicle)
+    {
+        super.onCreate(icicle);
     }
 
     @Override
@@ -82,7 +93,7 @@ public class HomeWidgetConfigureActivity extends Activity {
 
         if (getIntent().getExtras().getBoolean("loadExisting", false))
         {
-            WidgetSetting setting = WidgetSettingsFactory.load(this.getApplicationContext(), mAppWidgetId);
+            WidgetSetting setting = SettingsFactory.load(WidgetSetting.class, this.getApplicationContext(), mAppWidgetId);
             fillSettingsWindow(setting);
         }
     }
@@ -90,7 +101,7 @@ public class HomeWidgetConfigureActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.settings_activity_actions, menu);
+        inflater.inflate(R.menu.widget_save_action, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -234,7 +245,7 @@ public class HomeWidgetConfigureActivity extends Activity {
         }
     };
 
-    private void mOnAddClickListener(Context context) {
+    public void mOnAddClickListener(Context context) {
         //Read all settings
         WidgetSetting setting = new WidgetSetting();
         setting.phoneNumber = "";
@@ -266,7 +277,7 @@ public class HomeWidgetConfigureActivity extends Activity {
             return;
         }
 
-        WidgetSettingsFactory.save(context, mAppWidgetId, setting);
+        SettingsFactory.save(context, mAppWidgetId, setting);
 
         //Update the widget manually if it exists
         //if (getIntent().getExtras().getBoolean("loadExisting", false)) {
@@ -318,7 +329,7 @@ public class HomeWidgetConfigureActivity extends Activity {
         }
     }
 
-    private void updateTitleHint()
+    public void updateTitleHint()
     {
         TextView titleText = ((TextView)findViewById(R.id.editTitle));
         int added = 0;

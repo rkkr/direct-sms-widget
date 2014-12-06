@@ -1,9 +1,15 @@
-package rkr.directsmswidget;
+package rkr.directsmswidget.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+
+import rkr.directsmswidget.R;
+import rkr.directsmswidget.settings.SettingsFactory;
+import rkr.directsmswidget.settings.WidgetSetting;
+import rkr.directsmswidget.utils.Helpers;
+import rkr.directsmswidget.utils.SmsFactory;
 
 
 public class SendConfirmationActivity extends Activity {
@@ -16,7 +22,7 @@ public class SendConfirmationActivity extends Activity {
         setContentView(R.layout.activity_send_confirmation);
 
         int widgetId = Helpers.IntentToWidgetId(getIntent());
-        widgetSetting = WidgetSettingsFactory.load(this.getApplicationContext(), widgetId);
+        widgetSetting = SettingsFactory.load(WidgetSetting.class, this.getApplicationContext(), widgetId);
         String message = "Send message \"" + widgetSetting.title + "\"?";
 
         ((TextView)findViewById(R.id.text_message)).setText(message);
