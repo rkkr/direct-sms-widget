@@ -39,9 +39,9 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
         ((Spinner)findViewById(R.id.cboClickAction)).setOnItemSelectedListener(mOnSelectWidgetClickAction);
         contactRows.add(new ContactRow(findViewById(R.id.layout_contact_row_1)));
 
-
-        if (getIntent().getExtras().getBoolean("loadExisting", false))
+        if (getIntent().getExtras() != null && getIntent().getExtras().getBoolean("loadExisting", false))
         {
+            mAppWidgetId = Helpers.IntentToWidgetId(getIntent());
             NotificationSetting setting = SettingsFactory.load(NotificationSetting.class, this.getApplicationContext(), mAppWidgetId);
             fillSettingsWindow(setting);
         }
@@ -63,8 +63,8 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
 
     private void fillSettingsWindow(NotificationSetting setting)
     {
-        String[] phoneNumbers = setting.phoneNumber.split(";");
-        String[] contactsNames = setting.contactName.split(";");
+        String[] phoneNumbers = setting.phoneNumbers();
+        String[] contactsNames = setting.contactNames();
         for (int i=1; i<phoneNumbers.length; i++)
             mAddContactClickListener.onClick(null);
         for (int i=0; i<phoneNumbers.length; i++) {
@@ -84,7 +84,7 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (getIntent().getExtras().getBoolean("loadExisting", false)) {
+        if (getIntent().getExtras() != null && getIntent().getExtras().getBoolean("loadExisting", false)) {
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.widget_delete_action, menu);
         }
@@ -151,12 +151,10 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
 
         SettingsFactory.save(context, mAppWidgetId, setting);
 
-        if (getIntent().getExtras().getBoolean("loadExisting", false)) {
-            Intent settingsUpdateIntent = new Intent();
-            settingsUpdateIntent.setAction(AppSettingsActivity.refreshAction);
-            settingsUpdateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-            sendBroadcast(settingsUpdateIntent);
-        }
+        Intent settingsUpdateIntent = new Intent();
+        settingsUpdateIntent.setAction(AppSettingsActivity.refreshAction);
+        settingsUpdateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+        sendBroadcast(settingsUpdateIntent);
         finish();
     }
 }

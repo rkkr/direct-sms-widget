@@ -18,6 +18,7 @@ import rkr.directsmswidget.settings.WidgetSetting;
 public class SmsFactory {
 
     static private boolean toastReceiverRegistered = false;
+    static private boolean reportToastSuccess = true;
 
     public static void SendForWidget(final Context context, Intent intent){
         int widgetId = Helpers.IntentToWidgetId(intent);
@@ -55,8 +56,11 @@ public class SmsFactory {
     public static void Send(Context context, WidgetSetting setting)
     {
         String phoneNumbers[] = setting.phoneNumber.split(";");
+        reportToastSuccess = phoneNumbers.length == 1;
         for (int i=0; i<phoneNumbers.length; i++)
             Send(context, phoneNumbers[i], setting.message);
+        if (!reportToastSuccess)
+            Toast.makeText(context, phoneNumbers.length + " messages are being sent", Toast.LENGTH_SHORT).show();
     }
 
     public static void Send(Context context, String phoneNumber, String message)
@@ -80,9 +84,9 @@ public class SmsFactory {
     static BroadcastReceiver smsReceive = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (getResultCode() == Activity.RESULT_OK)
+            if (getResultCode() == Activity.RESULT_OK && reportToastSuccess)
                 Toast.makeText(context, "Message sent", Toast.LENGTH_SHORT).show();
-            else
+            if (getResultCode() != Activity.RESULT_OK)
                 Toast.makeText(context, "Message send failure", Toast.LENGTH_SHORT).show();
         }
     };
