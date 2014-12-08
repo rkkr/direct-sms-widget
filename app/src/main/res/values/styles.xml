@@ -2,4 +2,12 @@
 <resources>
     <style name="AppTheme" parent="android:Theme.Holo">
     </style>
+    <style name="weekday_toggle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:background">#00ffffff</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:clickable">false</item>
+    </style>
 </resources>

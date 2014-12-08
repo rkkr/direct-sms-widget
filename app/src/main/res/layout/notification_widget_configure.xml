@@ -1,26 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
 
-    <include layout="@layout/widget_configure_message_block"/>
-
-    <TextView
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Select notification time"
-        android:layout_marginBottom="8dp" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="40dp"
-        android:text="8:00"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"
-        android:id="@+id/button_select_time"/>
+        <include layout="@layout/widget_configure_message_block"/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select notification time"
+            android:layout_marginBottom="8dp" />
 
-</LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="40sp"
+            android:text="8:00"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"
+            android:id="@+id/button_select_time"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select notification weekdays"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ToggleButton
+                style="@style/weekday_toggle"
+                android:textOff="MON"
+                android:textOn="MON"/>
+
+            <ToggleButton
+                style="@style/weekday_toggle"
+                android:textOff="TUE"
+                android:textOn="TUE"/>
+
+            <ToggleButton
+                style="@style/weekday_toggle"
+                android:textOff="WED"
+                android:textOn="WED"/>
+
+            <ToggleButton
+                style="@style/weekday_toggle"
+                android:textOff="THU"
+                android:textOn="THU"/>
+
+            <ToggleButton
+                style="@style/weekday_toggle"
+                android:textOff="FRI"
+                android:textOn="FRI"/>
+
+            <ToggleButton
+                style="@style/weekday_toggle"
+                android:textOff="SAT"
+                android:textOn="SAT"/>
+
+            <ToggleButton
+                style="@style/weekday_toggle"
+                android:textOff="SUN"
+                android:textOn="SUN"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
