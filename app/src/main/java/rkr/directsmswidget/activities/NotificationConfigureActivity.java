@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -129,6 +130,26 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
         widgetClickActionSelection = setting.clickAction;
 
         updateTitleHint();
+
+        updateTimeView(setting.hour, setting.minute);
+        ((ToggleButton)findViewById(R.id.button_select_week_mon)).setChecked(setting.day1);
+        ((ToggleButton)findViewById(R.id.button_select_week_tue)).setChecked(setting.day2);
+        ((ToggleButton)findViewById(R.id.button_select_week_wed)).setChecked(setting.day3);
+        ((ToggleButton)findViewById(R.id.button_select_week_thu)).setChecked(setting.day4);
+        ((ToggleButton)findViewById(R.id.button_select_week_fri)).setChecked(setting.day5);
+        ((ToggleButton)findViewById(R.id.button_select_week_sat)).setChecked(setting.day6);
+        ((ToggleButton)findViewById(R.id.button_select_week_sun)).setChecked(setting.day7);
+
+        mSelectWeekToggleClickListener.onClick(findViewById(R.id.button_select_week_mon));
+        mSelectWeekToggleClickListener.onClick(findViewById(R.id.button_select_week_tue));
+        mSelectWeekToggleClickListener.onClick(findViewById(R.id.button_select_week_wed));
+        mSelectWeekToggleClickListener.onClick(findViewById(R.id.button_select_week_thu));
+        mSelectWeekToggleClickListener.onClick(findViewById(R.id.button_select_week_fri));
+        mSelectWeekToggleClickListener.onClick(findViewById(R.id.button_select_week_sat));
+        mSelectWeekToggleClickListener.onClick(findViewById(R.id.button_select_week_sun));
+
+        ((Switch)findViewById(R.id.switch_notification_enabled)).setChecked(setting.enabled);
+        ((Switch)findViewById(R.id.switch_notification_sound_enabled)).setChecked(setting.notificationSound);
     }
 
     @Override
@@ -183,10 +204,20 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
         setting.phoneNumber = setting.phoneNumber.substring(1);
         setting.contactName = setting.contactName.substring(1);
 
-
         setting.title = ((TextView)findViewById(R.id.editTitle)).getText().toString();
         setting.message = ((TextView)findViewById(R.id.editMessage)).getText().toString();
         setting.clickAction = widgetClickActionSelection;
+        setting.hour = selectedTimeHour;
+        setting.minute = selectedTimeMinute;
+        setting.day1 = ((ToggleButton)findViewById(R.id.button_select_week_mon)).isChecked();
+        setting.day2 = ((ToggleButton)findViewById(R.id.button_select_week_tue)).isChecked();
+        setting.day3 = ((ToggleButton)findViewById(R.id.button_select_week_wed)).isChecked();
+        setting.day4 = ((ToggleButton)findViewById(R.id.button_select_week_thu)).isChecked();
+        setting.day5 = ((ToggleButton)findViewById(R.id.button_select_week_fri)).isChecked();
+        setting.day6 = ((ToggleButton)findViewById(R.id.button_select_week_sat)).isChecked();
+        setting.day7 = ((ToggleButton)findViewById(R.id.button_select_week_sun)).isChecked();
+        setting.enabled = ((Switch)findViewById(R.id.switch_notification_enabled)).isChecked();
+        setting.notificationSound = ((Switch)findViewById(R.id.switch_notification_sound_enabled)).isChecked();
 
         //Stop if any are empty
         if (setting.phoneNumber.isEmpty()) {

@@ -23,6 +23,8 @@ public class SettingsFactory {
         {
             String key = appWidgetId + "_" + field.getName();
             try {
+                if (field.getType().equals(Boolean.class))
+                    prefs.putBoolean(key, (Boolean)field.get(setting));
                 if (field.getType().equals(Integer.class))
                     prefs.putInt(key, (Integer)field.get(setting));
                 if (field.getType().equals(String.class))
@@ -65,8 +67,11 @@ public class SettingsFactory {
         {
             String key = appWidgetId + "_" + field.getName();
             if (!prefs.contains(key))
-                return null;
+                Log.e("rkr.direct-sms-widget.widgetsettingfactory.load", "Setting " + key + " not found");
+                //return null;
             try {
+                if (field.getType() == Boolean.class)
+                    field.set(setting, prefs.getBoolean(key, false));
                 if (field.getType() == Integer.class)
                     field.set(setting, prefs.getInt(key, 0));
                 if (field.getType() == String.class)
