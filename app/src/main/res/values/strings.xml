@@ -14,6 +14,16 @@
         <item>Open SMS application</item>
     </string-array>
 
+    <string-array name="itemsDismissTimes">
+        <item>Never</item>
+        <item>10 Minutes</item>
+        <item>30 Minutes</item>
+        <item>1 Hour</item>
+        <item>2 Hours</item>
+        <item>6 Hours</item>
+        <item>12 Hours</item>
+    </string-array>
+
     <string name="title_activity_send_confirmation">Direct SMS Widget</string>
     <string name="action_settings">Settings</string>
 

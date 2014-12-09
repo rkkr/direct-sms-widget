@@ -6,7 +6,10 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.SpannableString;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import rkr.directsmswidget.AppSettingsActivity;
 import rkr.directsmswidget.R;
@@ -23,6 +27,9 @@ import rkr.directsmswidget.settings.SettingsFactory;
 import rkr.directsmswidget.utils.Helpers;
 
 public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
+
+    private int selectedTimeHour;
+    private int selectedTimeMinute;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -36,8 +43,19 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
         findViewById(R.id.button_add_new_contact).setOnClickListener(mAddContactClickListener);
         findViewById(R.id.button_delete_contact).setOnClickListener(mDeleteContactClickListener);
         findViewById(R.id.button_select_time).setOnClickListener(mSelectTimeClickListener);
+
+        findViewById(R.id.button_select_week_mon).setOnClickListener(mSelectWeekToggleClickListener);
+        findViewById(R.id.button_select_week_tue).setOnClickListener(mSelectWeekToggleClickListener);
+        findViewById(R.id.button_select_week_wed).setOnClickListener(mSelectWeekToggleClickListener);
+        findViewById(R.id.button_select_week_thu).setOnClickListener(mSelectWeekToggleClickListener);
+        findViewById(R.id.button_select_week_fri).setOnClickListener(mSelectWeekToggleClickListener);
+        findViewById(R.id.button_select_week_sat).setOnClickListener(mSelectWeekToggleClickListener);
+        findViewById(R.id.button_select_week_sun).setOnClickListener(mSelectWeekToggleClickListener);
+
         ((Spinner)findViewById(R.id.cboClickAction)).setOnItemSelectedListener(mOnSelectWidgetClickAction);
         contactRows.add(new ContactRow(findViewById(R.id.layout_contact_row_1)));
+
+        updateTimeView(8, 0);
 
         if (getIntent().getExtras() != null && getIntent().getExtras().getBoolean("loadExisting", false))
         {
@@ -49,13 +67,44 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
             mAppWidgetId = Helpers.getRandInt();
     }
 
+    private void updateTimeView(int hour, int minute)
+    {
+        selectedTimeMinute = minute;
+        selectedTimeHour = hour;
+        String text = String.format("%d:%02d", hour, minute);
+
+        ((TextView)findViewById(R.id.button_select_time)).setText(text);
+    }
+
+    View.OnClickListener mSelectWeekToggleClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ToggleButton toggle = (ToggleButton)v;
+            if (toggle.isChecked()) {
+                toggle.setTextColor(0xff33b5e5);
+                toggle.setTypeface(null, Typeface.BOLD);
+                toggle.setPaintFlags(toggle.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+            }
+            else {
+                toggle.setTextColor(0xffffffff);
+                toggle.setTypeface(null, Typeface.NORMAL);
+                toggle.setPaintFlags(toggle.getPaintFlags() ^ Paint.UNDERLINE_TEXT_FLAG);
+            }
+
+        }
+    };
+
     View.OnClickListener mSelectTimeClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            String currentTime = (String)((TextView)findViewById(R.id.button_select_time)).getText();
+
             TimePickerDialog mTimePicker = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
                 @Override
-                public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {}
-            }, 8, 0, true);
+                public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                    updateTimeView(selectedHour, selectedMinute);
+                }
+            }, selectedTimeHour, selectedTimeMinute, true);
             mTimePicker.setTitle("Select Time");
             mTimePicker.show();
         }

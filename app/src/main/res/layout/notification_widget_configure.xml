@@ -9,7 +9,36 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enabled"
+            android:id="@+id/switch_notification_enabled"
+            android:enabled="true"
+            android:layout_marginBottom="8dp"/>
+
         <include layout="@layout/widget_configure_message_block"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Automatic notification dismiss"
+            android:layout_marginBottom="8dp" />
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/cboNotificationDismiss"
+            android:entries="@array/itemsDismissTimes"
+            android:layout_marginBottom="12dp"/>
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Play Notification Sound"
+            android:id="@+id/switch_notification_sound_enabled"
+            android:enabled="true"
+            android:layout_marginBottom="8dp"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -30,7 +59,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Select notification weekdays"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"/>
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
@@ -40,37 +70,44 @@
             <ToggleButton
                 style="@style/weekday_toggle"
                 android:textOff="MON"
-                android:textOn="MON"/>
+                android:textOn="MON"
+                android:id="@+id/button_select_week_mon"/>
 
             <ToggleButton
                 style="@style/weekday_toggle"
                 android:textOff="TUE"
-                android:textOn="TUE"/>
+                android:textOn="TUE"
+                android:id="@+id/button_select_week_tue"/>
 
             <ToggleButton
                 style="@style/weekday_toggle"
                 android:textOff="WED"
-                android:textOn="WED"/>
+                android:textOn="WED"
+                android:id="@+id/button_select_week_wed"/>
 
             <ToggleButton
                 style="@style/weekday_toggle"
                 android:textOff="THU"
-                android:textOn="THU"/>
+                android:textOn="THU"
+                android:id="@+id/button_select_week_thu"/>
 
             <ToggleButton
                 style="@style/weekday_toggle"
                 android:textOff="FRI"
-                android:textOn="FRI"/>
+                android:textOn="FRI"
+                android:id="@+id/button_select_week_fri"/>
 
             <ToggleButton
                 style="@style/weekday_toggle"
                 android:textOff="SAT"
-                android:textOn="SAT"/>
+                android:textOn="SAT"
+                android:id="@+id/button_select_week_sat"/>
 
             <ToggleButton
                 style="@style/weekday_toggle"
                 android:textOff="SUN"
-                android:textOn="SUN"/>
+                android:textOn="SUN"
+                android:id="@+id/button_select_week_sun"/>
 
         </LinearLayout>
 

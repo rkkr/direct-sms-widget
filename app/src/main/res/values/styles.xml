@@ -9,5 +9,6 @@
         <item name="android:background">#00ffffff</item>
         <item name="android:singleLine">true</item>
         <item name="android:clickable">false</item>
+        <item name="android:textColor">#ffffffff</item>
     </style>
 </resources>
