@@ -33,6 +33,12 @@
                 android:resource="@xml/home_widget_info" />
         </receiver>
 
+        <receiver android:name=".utils.NotificationScheduler" android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+            </intent-filter>
+        </receiver>
+
         <activity
             android:theme="@android:style/Theme.Holo.Light.Dialog"
             android:name=".activities.SendConfirmationActivity"
