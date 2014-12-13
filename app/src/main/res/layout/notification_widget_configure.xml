@@ -14,8 +14,8 @@
             android:layout_height="wrap_content"
             android:text="Enabled"
             android:id="@+id/switch_notification_enabled"
-            android:enabled="true"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp"
+            android:checked="true" />
 
         <include layout="@layout/widget_configure_message_block"/>
 
@@ -23,6 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Automatic notification dismiss"
+            android:visibility="gone"
             android:layout_marginBottom="8dp" />
 
         <Spinner
@@ -30,6 +31,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/cboNotificationDismiss"
             android:entries="@array/itemsDismissTimes"
+            android:visibility="gone"
             android:layout_marginBottom="12dp"/>
 
         <Switch
@@ -37,7 +39,7 @@
             android:layout_height="wrap_content"
             android:text="Play Notification Sound"
             android:id="@+id/switch_notification_sound_enabled"
-            android:enabled="true"
+            android:checked="true"
             android:layout_marginBottom="8dp"/>
 
         <TextView

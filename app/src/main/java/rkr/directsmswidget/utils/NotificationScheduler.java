@@ -4,13 +4,16 @@ import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Map;
@@ -18,7 +21,6 @@ import java.util.Map;
 import rkr.directsmswidget.R;
 import rkr.directsmswidget.settings.NotificationSetting;
 import rkr.directsmswidget.settings.SettingsFactory;
-import rkr.directsmswidget.settings.WidgetSetting;
 
 
 public class NotificationScheduler extends BroadcastReceiver {
@@ -29,7 +31,13 @@ public class NotificationScheduler extends BroadcastReceiver {
         for (Map.Entry<Integer, NotificationSetting> entry : settings.entrySet())
             sync(context, entry.getKey(), entry.getValue());
 
-        //TODO: enable autoboot if needed
+        for (Map.Entry<Integer, NotificationSetting> entry : settings.entrySet())
+            if (entry.getValue().enabled) {
+                setAutoBoot(context, true);
+                return;
+            }
+
+        setAutoBoot(context, false);
     }
 
     public static void sync (Context context, Integer widgetId, NotificationSetting setting)
@@ -37,8 +45,8 @@ public class NotificationScheduler extends BroadcastReceiver {
         AlarmManager alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, NotificationScheduler.class);
         intent.setAction("rkr.directsmswidget.NOTIFICATION_SCHEDULE");
-        intent.getExtras().putInt("widgetId", widgetId);
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(context, widgetId, intent, 0);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(context, widgetId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         //cancel all for this widget
         alarmMgr.cancel(alarmIntent);
@@ -50,8 +58,30 @@ public class NotificationScheduler extends BroadcastReceiver {
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, setting.hour);
         calendar.set(Calendar.MINUTE, setting.minute);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
 
-        alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, alarmIntent);
+        //Next schedule is tomorrow
+        if (calendar.getTimeInMillis() < System.currentTimeMillis())
+            calendar.add(Calendar.HOUR, 24);
+
+        //alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, alarmIntent);
+        alarmMgr.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, alarmIntent);
+
+        Log.d("rkr.directsmswidget.notificationscheduler", "Next notification in: " + (calendar.getTimeInMillis() - System.currentTimeMillis()) / 1000);
+
+        setAutoBoot(context, true);
+    }
+
+    private static void setAutoBoot(Context context, boolean value)
+    {
+        ComponentName receiver = new ComponentName(context, NotificationScheduler.class);
+        PackageManager pm = context.getPackageManager();
+
+        if (value)
+            pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+        else
+            pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
     }
 
     private void notify(Context context, int widgetId)
@@ -76,7 +106,19 @@ public class NotificationScheduler extends BroadcastReceiver {
             dayOfWeek == Calendar.SATURDAY && setting.day6 ||
             dayOfWeek == Calendar.SUNDAY && setting.day7
             )
+        {
             doNotify(context, setting, widgetId);
+            return;
+        }
+
+        if ((setting.day1 || setting.day2 || setting.day3 || setting.day4 || setting.day5 ||
+                setting.day6 || setting.day7) == false)
+        {
+            doNotify(context, setting, widgetId);
+            //Disable single use event
+            setting.enabled = false;
+            SettingsFactory.save(context, widgetId, setting);
+        }
     }
 
     private void doNotify(Context context, NotificationSetting setting, int widgetId)
@@ -91,7 +133,7 @@ public class NotificationScheduler extends BroadcastReceiver {
 
         Intent intent = new Intent(context, NotificationScheduler.class);
         intent.setAction("rkr.directsmswidget.NOTIFICATION_CLICK");
-        intent.getExtras().putInt("widgetId", widgetId);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
         PendingIntent clickIntent = PendingIntent.getBroadcast(context, widgetId, intent, 0);
 
         notification.setContentIntent(clickIntent);
@@ -103,7 +145,9 @@ public class NotificationScheduler extends BroadcastReceiver {
             notification.setSound(uri);
         }
 
-        mNotificationManager.notify(widgetId, notification.build());
+        //API Level 16 only
+        //mNotificationManager.notify(widgetId, notification.build());
+        mNotificationManager.notify(widgetId, notification.getNotification());
 
         doRegisterAutoDelete(context, setting, widgetId);
     }
@@ -113,18 +157,12 @@ public class NotificationScheduler extends BroadcastReceiver {
         AlarmManager alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, NotificationScheduler.class);
         intent.setAction("rkr.directsmswidget.NOTIFICATION_REMOVE");
-        intent.getExtras().putInt("widgetId", widgetId);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
         PendingIntent alarmIntent = PendingIntent.getBroadcast(context, widgetId, intent, 0);
 
         //TODO: store the autodismiss time
         long timeStamp = System.currentTimeMillis() + 60*1000;
         alarmMgr.set(AlarmManager.ELAPSED_REALTIME, timeStamp, alarmIntent);
-    }
-
-    private void doSend(Context context, int widgetId)
-    {
-        WidgetSetting setting = SettingsFactory.load(WidgetSetting.class, context, widgetId);
-        SmsFactory.Send(context, setting);
     }
 
     private void doRemove(Context context, int widgetId)
@@ -135,19 +173,22 @@ public class NotificationScheduler extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+        //Log.d("rkr.directsmswidget.notificationscheduler", "Notification received: " + intent.getAction());
+
+        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED") ||
+            intent.getAction().equals("android.intent.action.TIME_SET") ||
+            intent.getAction().equals("android.intent.action.TIMEZONE_CHANGED")) {
             sync(context);
         }
         if (intent.getAction().equals("rkr.directsmswidget.NOTIFICATION_SCHEDULE")) {
-            int widgetId = intent.getExtras().getInt("widgetId");
+            int widgetId = intent.getExtras().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID);
             notify(context, widgetId);
         }
         if (intent.getAction().equals("rkr.directsmswidget.NOTIFICATION_CLICK")) {
-            int widgetId = intent.getExtras().getInt("widgetId");
-            doSend(context, widgetId);
+            SmsFactory.SendForNotification(context, intent);
         }
         if (intent.getAction().equals("rkr.directsmswidget.NOTIFICATION_REMOVE")) {
-            int widgetId = intent.getExtras().getInt("widgetId");
+            int widgetId = intent.getExtras().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID);
             doRemove(context, widgetId);
         }
     }

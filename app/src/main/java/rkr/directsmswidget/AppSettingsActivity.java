@@ -19,6 +19,7 @@ import java.util.Map;
 import rkr.directsmswidget.activities.HomeWidgetConfigureActivity;
 import rkr.directsmswidget.activities.NotificationConfigureActivity;
 import rkr.directsmswidget.settings.NotificationSetting;
+import rkr.directsmswidget.utils.NotificationScheduler;
 import rkr.directsmswidget.widgets.HomeWidget;
 import rkr.directsmswidget.R;
 import rkr.directsmswidget.settings.SettingsFactory;
@@ -26,7 +27,7 @@ import rkr.directsmswidget.settings.WidgetSetting;
 
 public class AppSettingsActivity extends PreferenceActivity {
 
-    public static String refreshAction = "rkr.directsmsmessage.appsettingsactivity.refreshwidgetlist";
+    public static String refreshAction = "rkr.directsmsmessage.refreshwidgetlist";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -105,6 +106,20 @@ public class AppSettingsActivity extends PreferenceActivity {
             pref.setIntent(intent);
             notificationSection.addPreference(pref);
         }
+
+        //Async to not lock UI
+        /*final Context context = this.getApplicationContext();
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    Thread.sleep(1000);
+                }
+                catch (Exception e) {}
+                NotificationScheduler.sync(context);
+            }
+        }).start();*/
+
+        NotificationScheduler.sync(this.getApplicationContext());
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {

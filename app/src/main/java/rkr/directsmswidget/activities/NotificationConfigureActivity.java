@@ -56,8 +56,6 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
         ((Spinner)findViewById(R.id.cboClickAction)).setOnItemSelectedListener(mOnSelectWidgetClickAction);
         contactRows.add(new ContactRow(findViewById(R.id.layout_contact_row_1)));
 
-        updateTimeView(8, 0);
-
         if (getIntent().getExtras() != null && getIntent().getExtras().getBoolean("loadExisting", false))
         {
             mAppWidgetId = Helpers.IntentToWidgetId(getIntent());
@@ -65,7 +63,10 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
             fillSettingsWindow(setting);
         }
         else
+        {
             mAppWidgetId = Helpers.getRandInt();
+            updateTimeView(8, 0);
+        }
     }
 
     private void updateTimeView(int hour, int minute)
@@ -230,6 +231,12 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
         }
 
         SettingsFactory.save(context, mAppWidgetId, setting);
+
+        if ((setting.day1 || setting.day2 || setting.day3 || setting.day4 || setting.day5 ||
+            setting.day6 || setting.day7) == false)
+        {
+            Toast.makeText(context, "No days selected - notification will be shown only once", Toast.LENGTH_SHORT).show();
+        }
 
         Intent settingsUpdateIntent = new Intent();
         settingsUpdateIntent.setAction(AppSettingsActivity.refreshAction);

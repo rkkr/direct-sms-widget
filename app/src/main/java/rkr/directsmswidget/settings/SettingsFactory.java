@@ -6,6 +6,7 @@ import android.util.Log;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +22,10 @@ public class SettingsFactory {
 
         for (Field field : setting.getClass().getFields())
         {
+            //don't save/load constants
+            if (Modifier.isFinal(field.getModifiers()))
+                continue;
+
             String key = appWidgetId + "_" + field.getName();
             try {
                 if (field.getType().equals(Boolean.class))
@@ -40,7 +45,7 @@ public class SettingsFactory {
     public static <T> Map<Integer, T> loadAll(Class<T> cls, Context context) {
         Map<Integer, T> temp = new HashMap<Integer, T>();
         Set<Integer> ids = getIds(cls, context);
-        for (int id : ids)
+        for (Integer id : ids)
             temp.put(id, (load(cls, context, id)));
         return temp;
     }
@@ -65,10 +70,18 @@ public class SettingsFactory {
 
         for (Field field : setting.getClass().getFields())
         {
+            //don't save/load constants
+            if (Modifier.isFinal(field.getModifiers()))
+                continue;
+
             String key = appWidgetId + "_" + field.getName();
-            if (!prefs.contains(key))
+            if (!prefs.contains(key)) {
                 Log.e("rkr.direct-sms-widget.widgetsettingfactory.load", "Setting " + key + " not found");
+                continue;
                 //return null;
+            }
+            //Log.d("rkr.direct-sms-widget.widgetsettingfactory.load", "Setting " + key + " loading");
+
             try {
                 if (field.getType() == Boolean.class)
                     field.set(setting, prefs.getBoolean(key, false));
