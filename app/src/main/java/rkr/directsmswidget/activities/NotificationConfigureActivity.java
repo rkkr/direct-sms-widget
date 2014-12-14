@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -26,11 +27,13 @@ import rkr.directsmswidget.R;
 import rkr.directsmswidget.settings.NotificationSetting;
 import rkr.directsmswidget.settings.SettingsFactory;
 import rkr.directsmswidget.utils.Helpers;
+import rkr.directsmswidget.utils.NotificationScheduler;
 
 public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
 
     private int selectedTimeHour;
     private int selectedTimeMinute;
+    private static int notificationAutoDismissSelection = 0;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -54,6 +57,7 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
         findViewById(R.id.button_select_week_sun).setOnClickListener(mSelectWeekToggleClickListener);
 
         ((Spinner)findViewById(R.id.cboClickAction)).setOnItemSelectedListener(mOnSelectWidgetClickAction);
+        ((Spinner)findViewById(R.id.cboNotificationDismiss)).setOnItemSelectedListener(mOnSelectAutoDismiss);
         contactRows.add(new ContactRow(findViewById(R.id.layout_contact_row_1)));
 
         if (getIntent().getExtras() != null && getIntent().getExtras().getBoolean("loadExisting", false))
@@ -112,6 +116,18 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
         }
     };
 
+    AdapterView.OnItemSelectedListener mOnSelectAutoDismiss = new AdapterView.OnItemSelectedListener(){
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            notificationAutoDismissSelection = pos;
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            //skip
+        }
+    };
+
     private void fillSettingsWindow(NotificationSetting setting)
     {
         String[] phoneNumbers = setting.phoneNumbers();
@@ -129,6 +145,8 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
         ((TextView)findViewById(R.id.editMessage)).setText(setting.message);
         ((Spinner)findViewById(R.id.cboClickAction)).setSelection(setting.clickAction);
         widgetClickActionSelection = setting.clickAction;
+        ((Spinner)findViewById(R.id.cboNotificationDismiss)).setSelection(setting.autoDismiss);
+        notificationAutoDismissSelection = setting.autoDismiss;
 
         updateTitleHint();
 
@@ -180,6 +198,7 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 SettingsFactory.delete(NotificationSetting.class, context, mAppWidgetId);
+                NotificationScheduler.sync(context);
                 Intent settingsUpdateIntent = new Intent();
                 settingsUpdateIntent.setAction(AppSettingsActivity.refreshAction);
                 settingsUpdateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
@@ -208,6 +227,7 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
         setting.title = ((TextView)findViewById(R.id.editTitle)).getText().toString();
         setting.message = ((TextView)findViewById(R.id.editMessage)).getText().toString();
         setting.clickAction = widgetClickActionSelection;
+        setting.autoDismiss = notificationAutoDismissSelection;
         setting.hour = selectedTimeHour;
         setting.minute = selectedTimeMinute;
         setting.day1 = ((ToggleButton)findViewById(R.id.button_select_week_mon)).isChecked();
@@ -237,6 +257,8 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
         {
             Toast.makeText(context, "No days selected - notification will be shown only once", Toast.LENGTH_SHORT).show();
         }
+
+        NotificationScheduler.sync(context);
 
         Intent settingsUpdateIntent = new Intent();
         settingsUpdateIntent.setAction(AppSettingsActivity.refreshAction);

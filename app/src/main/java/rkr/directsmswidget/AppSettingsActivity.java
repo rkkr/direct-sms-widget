@@ -119,7 +119,7 @@ public class AppSettingsActivity extends PreferenceActivity {
             }
         }).start();*/
 
-        NotificationScheduler.sync(this.getApplicationContext());
+        //NotificationScheduler.sync(this.getApplicationContext());
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {

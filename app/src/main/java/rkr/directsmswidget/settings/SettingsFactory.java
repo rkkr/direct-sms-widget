@@ -67,6 +67,7 @@ public class SettingsFactory {
         //WidgetSetting setting = new WidgetSetting();
         T setting = createObject(cls);
         SharedPreferences prefs = context.getSharedPreferences((String)get(setting, "PREFS_NAME"), Context.MODE_PRIVATE);
+        boolean loaded = false;
 
         for (Field field : setting.getClass().getFields())
         {
@@ -80,6 +81,7 @@ public class SettingsFactory {
                 continue;
                 //return null;
             }
+            loaded = true;
             //Log.d("rkr.direct-sms-widget.widgetsettingfactory.load", "Setting " + key + " loading");
 
             try {
@@ -92,9 +94,12 @@ public class SettingsFactory {
             }
             catch (Exception e){
                 Log.e("rkr.direct-sms-widget.widgetsettingfactory.load", e.getMessage());
+                continue;
                 //return null;
             }
         }
+        if (!loaded)
+            return null;
 
         return setting;
     }

@@ -53,9 +53,9 @@ public class HomeWidgetConfigureActivity extends Activity {
             0xffcc0000, 0xffeeeeee, 0xffffffff
     };
 
-    public HomeWidgetConfigureActivity() {
+    /*public HomeWidgetConfigureActivity() {
         super();
-    }
+    }*/
 
     public void passOnCreate(Bundle icicle)
     {

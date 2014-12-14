@@ -9,10 +9,11 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.PowerManager;
+import android.os.SystemClock;
 import android.util.Log;
 
 import java.util.Calendar;
@@ -65,7 +66,6 @@ public class NotificationScheduler extends BroadcastReceiver {
         if (calendar.getTimeInMillis() < System.currentTimeMillis())
             calendar.add(Calendar.HOUR, 24);
 
-        //alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, alarmIntent);
         alarmMgr.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, alarmIntent);
 
         Log.d("rkr.directsmswidget.notificationscheduler", "Next notification in: " + (calendar.getTimeInMillis() - System.currentTimeMillis()) / 1000);
@@ -154,15 +154,17 @@ public class NotificationScheduler extends BroadcastReceiver {
 
     private void doRegisterAutoDelete(Context context, NotificationSetting setting, int widgetId)
     {
+        if (setting.getAutoDismissMilis() <= 0)
+            return;
+
         AlarmManager alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, NotificationScheduler.class);
         intent.setAction("rkr.directsmswidget.NOTIFICATION_REMOVE");
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
         PendingIntent alarmIntent = PendingIntent.getBroadcast(context, widgetId, intent, 0);
 
-        //TODO: store the autodismiss time
-        long timeStamp = System.currentTimeMillis() + 60*1000;
-        alarmMgr.set(AlarmManager.ELAPSED_REALTIME, timeStamp, alarmIntent);
+        long timeStamp = SystemClock.elapsedRealtime() + setting.getAutoDismissMilis();
+        alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, timeStamp, alarmIntent);
     }
 
     private void doRemove(Context context, int widgetId)
@@ -174,6 +176,11 @@ public class NotificationScheduler extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         //Log.d("rkr.directsmswidget.notificationscheduler", "Notification received: " + intent.getAction());
+
+        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        PowerManager.WakeLock mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "NOTIFICATION_SCHEDULER");
+        //Hold wake for 5 seconds to allow to show notification
+        //mWakeLock.acquire(5 * 1000);
 
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED") ||
             intent.getAction().equals("android.intent.action.TIME_SET") ||
@@ -191,6 +198,8 @@ public class NotificationScheduler extends BroadcastReceiver {
             int widgetId = intent.getExtras().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID);
             doRemove(context, widgetId);
         }
+
+        mWakeLock.release();
     }
 
 }
