@@ -106,20 +106,6 @@ public class AppSettingsActivity extends PreferenceActivity {
             pref.setIntent(intent);
             notificationSection.addPreference(pref);
         }
-
-        //Async to not lock UI
-        /*final Context context = this.getApplicationContext();
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    Thread.sleep(1000);
-                }
-                catch (Exception e) {}
-                NotificationScheduler.sync(context);
-            }
-        }).start();*/
-
-        //NotificationScheduler.sync(this.getApplicationContext());
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {

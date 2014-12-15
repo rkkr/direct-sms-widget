@@ -23,7 +23,7 @@ public class SendConfirmationActivity extends Activity {
 
         int widgetId = Helpers.IntentToWidgetId(getIntent());
         widgetSetting = SettingsFactory.load(WidgetSetting.class, this.getApplicationContext(), widgetId);
-        String message = "Send message \"" + widgetSetting.title + "\"?";
+        String message = "Send message \"" + widgetSetting.getWidgetTitle() + "\"?";
 
         ((TextView)findViewById(R.id.text_message)).setText(message);
         findViewById(R.id.button_send).setOnClickListener(mOnSendClickListener);
