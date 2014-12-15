@@ -53,9 +53,8 @@ public class AppSettingsActivity extends PreferenceActivity {
         PreferenceGroup homeWidgetsSection = (PreferenceGroup)getPreferenceManager().findPreference("HomeScreenSettings");
         int[] widgetIds = AppWidgetManager.getInstance(this).getAppWidgetIds(new ComponentName(this, HomeWidget.class));
 
-        //Keep the help text if no widgets are found
-        if (widgetIds.length > 0)
-            homeWidgetsSection.removeAll();
+        homeWidgetsSection.removeAll();
+        boolean added = false;
 
         for (Integer widgetId : widgetIds)
         {
@@ -76,6 +75,14 @@ public class AppSettingsActivity extends PreferenceActivity {
             intent.putExtra("loadExisting", true);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             pref.setIntent(intent);
+            homeWidgetsSection.addPreference(pref);
+
+            added = true;
+        }
+
+        if (!added) {
+            Preference pref = new Preference(this.getApplicationContext());
+            pref.setTitle("Use your launcher to add widgets");
             homeWidgetsSection.addPreference(pref);
         }
     }

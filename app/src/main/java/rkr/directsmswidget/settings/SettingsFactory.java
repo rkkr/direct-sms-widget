@@ -64,7 +64,6 @@ public class SettingsFactory {
 
 
     public static <T> T load(Class<T> cls, Context context, int appWidgetId) {
-        //WidgetSetting setting = new WidgetSetting();
         T setting = createObject(cls);
         SharedPreferences prefs = context.getSharedPreferences((String)get(setting, "PREFS_NAME"), Context.MODE_PRIVATE);
         boolean loaded = false;
@@ -98,8 +97,10 @@ public class SettingsFactory {
                 //return null;
             }
         }
-        if (!loaded)
+        if (!loaded) {
+            Log.e("rkr.direct-sms-widget.widgetsettingfactory.load", "Failed to load setting " + appWidgetId);
             return null;
+        }
 
         return setting;
     }

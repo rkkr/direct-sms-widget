@@ -61,6 +61,7 @@ public class HomeWidget extends AppWidgetProvider {
             return;
         }
         String widgetText = setting.getWidgetTitle();
+        widgetText = widgetText.replaceAll(";", "; ");
 
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.home_widget);

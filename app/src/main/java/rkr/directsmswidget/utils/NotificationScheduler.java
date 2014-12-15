@@ -179,6 +179,7 @@ public class NotificationScheduler extends BroadcastReceiver {
 
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         PowerManager.WakeLock mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "NOTIFICATION_SCHEDULER");
+        mWakeLock.acquire();
         //Hold wake for 5 seconds to allow to show notification
         //mWakeLock.acquire(5 * 1000);
 

@@ -4,10 +4,6 @@
         android:key="HomeScreenSettings"
         android:title="Edit Home Screen Widgets">
 
-        <Preference
-            android:title="Use your launcher to add widgets"
-            android:selectable="false"/>
-
     </PreferenceCategory>
 
     <PreferenceCategory
