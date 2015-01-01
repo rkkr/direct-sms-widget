@@ -45,15 +45,10 @@
 
         <activity
             android:theme="@android:style/Theme.Holo.Light.Dialog"
-            android:name=".activities.WidgetSendConfirmationActivity"
+            android:name=".activities.SendConfirmationActivity"
             android:label="@string/title_activity_send_confirmation" >
         </activity>
 
-        <activity
-            android:theme="@android:style/Theme.Holo.Light.Dialog"
-            android:name=".activities.NotificationSendConfirmationActivity"
-            android:label="@string/title_activity_send_confirmation" >
-        </activity>
     </application>
 
     <uses-permission android:name="android.permission.SEND_SMS" />

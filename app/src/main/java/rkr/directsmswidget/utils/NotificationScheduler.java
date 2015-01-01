@@ -12,8 +12,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Build;
-import android.os.PowerManager;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -184,12 +182,6 @@ public class NotificationScheduler extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         //Log.d("rkr.directsmswidget.notificationscheduler", "Notification received: " + intent.getAction());
 
-        //PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        //PowerManager.WakeLock mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "NOTIFICATION_SCHEDULER");
-        //mWakeLock.acquire();
-        //Hold wake for 5 seconds to allow to show notification
-        //mWakeLock.acquire(5 * 1000);
-
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED") ||
             intent.getAction().equals("android.intent.action.TIME_SET") ||
             intent.getAction().equals("android.intent.action.TIMEZONE_CHANGED")) {
@@ -200,14 +192,12 @@ public class NotificationScheduler extends BroadcastReceiver {
             notify(context, widgetId);
         }
         if (intent.getAction().equals("rkr.directsmswidget.NOTIFICATION_CLICK")) {
-            SmsFactory.SendForNotification(context, intent);
+            SmsFactory.Send(NotificationSetting.class, context, intent);
         }
         if (intent.getAction().equals("rkr.directsmswidget.NOTIFICATION_REMOVE")) {
             int widgetId = intent.getExtras().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID);
             doRemove(context, widgetId);
         }
-
-        //mWakeLock.release();
     }
 
 }

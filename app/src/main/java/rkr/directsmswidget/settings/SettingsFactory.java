@@ -76,7 +76,7 @@ public class SettingsFactory {
 
             String key = appWidgetId + "_" + field.getName();
             if (!prefs.contains(key)) {
-                Log.e("rkr.direct-sms-widget.widgetsettingfactory.load", "Setting " + key + " not found");
+                Log.e("rkr.direct-sms-widget.settingfactory.load", "Setting " + key + " not found");
                 continue;
                 //return null;
             }
@@ -142,7 +142,7 @@ public class SettingsFactory {
         }
     }
 
-    private static <T> T createObject(Class<T> cls)
+    public static <T> T createObject(Class<T> cls)
     {
         T setting;
         try {

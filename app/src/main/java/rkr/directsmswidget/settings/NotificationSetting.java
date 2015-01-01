@@ -1,13 +1,8 @@
 package rkr.directsmswidget.settings;
 
-public class NotificationSetting {
+public class NotificationSetting extends MessageSetting {
     public static final String PREFS_NAME = "rkr.directsmswidget.NotificationPrefs";
 
-    public String phoneNumber = "";
-    public String contactName = "";
-    public String title = "";
-    public String message = "";
-    public Integer clickAction = 0;
     public Integer hour = 8;
     public Integer minute = 0;
     public Boolean day1 = false;
@@ -20,21 +15,6 @@ public class NotificationSetting {
     public Boolean enabled = true;
     public Boolean notificationSound = true;
     public Integer autoDismiss = 0;
-
-    public String getWidgetTitle() {
-        if (this.title != null && this.title.trim().length() > 0)
-            return this.title;
-
-        return this.contactName;
-    }
-
-    public String[] phoneNumbers(){
-        return this.phoneNumber.split(";", -1);
-    }
-
-    public String[] contactNames(){
-        return this.contactName.split(";", -1);
-    }
 
     public long getAutoDismissMilis() {
         switch (autoDismiss) {

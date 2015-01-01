@@ -5,25 +5,26 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import java.io.Serializable;
+
 import rkr.directsmswidget.R;
-import rkr.directsmswidget.settings.SettingsFactory;
-import rkr.directsmswidget.settings.WidgetSetting;
+import rkr.directsmswidget.settings.MessageSetting;
 import rkr.directsmswidget.utils.Helpers;
 import rkr.directsmswidget.utils.SmsFactory;
 
 
-public class WidgetSendConfirmationActivity extends Activity {
+public class SendConfirmationActivity extends Activity {
 
-    WidgetSetting widgetSetting;
+    MessageSetting setting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_confirmation);
 
-        int widgetId = Helpers.IntentToWidgetId(getIntent());
-        widgetSetting = SettingsFactory.load(WidgetSetting.class, this.getApplicationContext(), widgetId);
-        String message = "Send message \"" + widgetSetting.getWidgetTitle() + "\"?";
+        setting = Helpers.IntentToMessageSetting(getIntent());
+
+        String message = "Send message \"" + setting.getWidgetTitle() + "\"?";
 
         ((TextView)findViewById(R.id.text_message)).setText(message);
         findViewById(R.id.button_send).setOnClickListener(mOnSendClickListener);
@@ -33,7 +34,7 @@ public class WidgetSendConfirmationActivity extends Activity {
     View.OnClickListener mOnSendClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            SmsFactory.Send(v.getContext(), widgetSetting);
+            SmsFactory.DoSend(v.getContext(), setting);
             finish();
         }
     };

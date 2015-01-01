@@ -7,6 +7,8 @@ import android.util.Log;
 
 import java.util.Random;
 
+import rkr.directsmswidget.settings.MessageSetting;
+
 public class Helpers {
     private static Random rd = new Random();
 
@@ -19,6 +21,11 @@ public class Helpers {
         }
 
         return extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+    }
+
+    public static MessageSetting IntentToMessageSetting(Intent intent) {
+        Bundle extras = intent.getExtras();
+        return (MessageSetting)extras.getSerializable("message");
     }
 
     public static int getRandInt(){

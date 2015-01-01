@@ -1,7 +1,6 @@
 package rkr.directsmswidget.utils;
 
 import android.app.PendingIntent;
-import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,20 +10,18 @@ import android.telephony.SmsManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import rkr.directsmswidget.activities.NotificationSendConfirmationActivity;
-import rkr.directsmswidget.activities.WidgetSendConfirmationActivity;
-import rkr.directsmswidget.settings.NotificationSetting;
+import rkr.directsmswidget.activities.SendConfirmationActivity;
+import rkr.directsmswidget.settings.MessageSetting;
 import rkr.directsmswidget.settings.SettingsFactory;
-import rkr.directsmswidget.settings.WidgetSetting;
 
 public class SmsFactory {
 
     static private boolean toastReceiverRegistered = false;
     static private boolean reportToastSuccess = true;
 
-    public static void SendForWidget(final Context context, Intent intent){
+    public static <T> void Send(Class<T> type, final Context context, Intent intent){
         int widgetId = Helpers.IntentToWidgetId(intent);
-        final WidgetSetting setting = SettingsFactory.load(WidgetSetting.class, context, widgetId);
+        final MessageSetting setting = (MessageSetting)SettingsFactory.load(type, context, widgetId);
 
         if (setting == null || setting.phoneNumber == null || setting.message == null){
             Log.e("rkr.directsmswidget.smsfactory", "Reading settings file failed");
@@ -34,11 +31,12 @@ public class SmsFactory {
         switch (setting.clickAction)
         {
             case 0:
-                Send(context, setting);
+                DoSend(context, setting);
                 break;
             case 1:
-                Intent confirmationIntent = new Intent(context, WidgetSendConfirmationActivity.class);
-                confirmationIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+                Intent confirmationIntent = new Intent(context, SendConfirmationActivity.class);
+                //confirmationIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+                confirmationIntent.putExtra("message", setting);
                 confirmationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(confirmationIntent);
                 break;
@@ -55,65 +53,17 @@ public class SmsFactory {
         }
     }
 
-    public static void SendForNotification(final Context context, Intent intent){
-        int widgetId = Helpers.IntentToWidgetId(intent);
-        final NotificationSetting setting = SettingsFactory.load(NotificationSetting.class, context, widgetId);
-
-        if (setting == null || setting.phoneNumber == null || setting.message == null){
-            Log.e("rkr.directsmswidget.smsfactory", "Reading settings file failed");
-            return;
-        }
-
-        switch (setting.clickAction)
-        {
-            case 0:
-                Send(context, setting);
-                break;
-            case 1:
-                Intent confirmationIntent = new Intent(context, NotificationSendConfirmationActivity.class);
-                confirmationIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
-                confirmationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(confirmationIntent);
-                break;
-            case 2:
-                Intent smsIntent = new Intent(Intent.ACTION_VIEW);
-                smsIntent.setType("vnd.android-dir/mms-sms");
-                smsIntent.putExtra("address", setting.phoneNumber);
-                smsIntent.putExtra("sms_body",setting.message);
-                smsIntent.setFlags(smsIntent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(smsIntent);
-                break;
-            default:
-                Log.e("rkr.directsmswidget.smsfactory", "Unknown widget click action: " + setting.clickAction);
-        }
-    }
-
-    public static void Send(Context context, NotificationSetting setting)
+    public static void DoSend(Context context, MessageSetting setting)
     {
         String phoneNumbers[] = setting.phoneNumbers();
         reportToastSuccess = phoneNumbers.length == 1;
         for (int i=0; i<phoneNumbers.length; i++)
-            Send(context, phoneNumbers[i], setting.message);
+            DoSend(context, phoneNumbers[i], setting.message);
         if (!reportToastSuccess)
             Toast.makeText(context, phoneNumbers.length + " messages are being sent", Toast.LENGTH_SHORT).show();
     }
 
-    public static void Send(Context context, WidgetSetting setting)
-    {
-        String phoneNumbers[] = setting.phoneNumbers();
-        reportToastSuccess = phoneNumbers.length == 1;
-        for (int i=0; i<phoneNumbers.length; i++)
-            Send(context, phoneNumbers[i], setting.message);
-        if (!reportToastSuccess)
-            Toast.makeText(context, phoneNumbers.length + " messages are being sent", Toast.LENGTH_SHORT).show();
-    }
-
-    public static void Send(Context context, String phoneNumber, String message)
-    {
-        Send(context, phoneNumber, message, true);
-    }
-
-    public static void Send(Context context, String phoneNumber, String message, Boolean showToast)
+    public static void DoSend(Context context, String phoneNumber, String message)
     {
         Intent sentIntent = new Intent("message_sent");
         PendingIntent sentPI = PendingIntent.getBroadcast(context, 0, sentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
