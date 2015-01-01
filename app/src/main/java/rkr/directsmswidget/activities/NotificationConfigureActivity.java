@@ -89,12 +89,12 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
             if (toggle.isChecked()) {
                 toggle.setTextColor(0xff33b5e5);
                 toggle.setTypeface(null, Typeface.BOLD);
-                toggle.setPaintFlags(toggle.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                //toggle.setPaintFlags(toggle.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
             }
             else {
                 toggle.setTextColor(0xffffffff);
                 toggle.setTypeface(null, Typeface.NORMAL);
-                toggle.setPaintFlags(toggle.getPaintFlags() ^ Paint.UNDERLINE_TEXT_FLAG);
+                //toggle.setPaintFlags(toggle.getPaintFlags() ^ Paint.UNDERLINE_TEXT_FLAG);
             }
 
         }

@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.util.Log;
@@ -63,12 +64,16 @@ public class NotificationScheduler extends BroadcastReceiver {
         calendar.set(Calendar.MILLISECOND, 0);
 
         //Next schedule is tomorrow
-        if (calendar.getTimeInMillis() < System.currentTimeMillis())
+        if (calendar.getTimeInMillis() <= System.currentTimeMillis())
             calendar.add(Calendar.HOUR, 24);
 
-        alarmMgr.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, alarmIntent);
+        if (android.os.Build.VERSION.SDK_INT >= 19){
+            alarmMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+        } else{
+            alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+        }
 
-        Log.d("rkr.directsmswidget.notificationscheduler", "Next notification in: " + (calendar.getTimeInMillis() - System.currentTimeMillis()) / 1000);
+        //Log.d("rkr.directsmswidget.notificationscheduler", "Next notification in: " + (calendar.getTimeInMillis() - System.currentTimeMillis()) / 1000);
 
         setAutoBoot(context, true);
     }
@@ -108,6 +113,8 @@ public class NotificationScheduler extends BroadcastReceiver {
             )
         {
             doNotify(context, setting, widgetId);
+            //Add next schedule event
+            sync(context, widgetId, setting);
             return;
         }
 
@@ -177,9 +184,9 @@ public class NotificationScheduler extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         //Log.d("rkr.directsmswidget.notificationscheduler", "Notification received: " + intent.getAction());
 
-        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        PowerManager.WakeLock mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "NOTIFICATION_SCHEDULER");
-        mWakeLock.acquire();
+        //PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        //PowerManager.WakeLock mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "NOTIFICATION_SCHEDULER");
+        //mWakeLock.acquire();
         //Hold wake for 5 seconds to allow to show notification
         //mWakeLock.acquire(5 * 1000);
 
@@ -200,7 +207,7 @@ public class NotificationScheduler extends BroadcastReceiver {
             doRemove(context, widgetId);
         }
 
-        mWakeLock.release();
+        //mWakeLock.release();
     }
 
 }

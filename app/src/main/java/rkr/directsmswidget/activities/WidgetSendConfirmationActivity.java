@@ -12,7 +12,7 @@ import rkr.directsmswidget.utils.Helpers;
 import rkr.directsmswidget.utils.SmsFactory;
 
 
-public class SendConfirmationActivity extends Activity {
+public class WidgetSendConfirmationActivity extends Activity {
 
     WidgetSetting widgetSetting;
 

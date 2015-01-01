@@ -11,7 +11,8 @@ import android.telephony.SmsManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import rkr.directsmswidget.activities.SendConfirmationActivity;
+import rkr.directsmswidget.activities.NotificationSendConfirmationActivity;
+import rkr.directsmswidget.activities.WidgetSendConfirmationActivity;
 import rkr.directsmswidget.settings.NotificationSetting;
 import rkr.directsmswidget.settings.SettingsFactory;
 import rkr.directsmswidget.settings.WidgetSetting;
@@ -36,7 +37,7 @@ public class SmsFactory {
                 Send(context, setting);
                 break;
             case 1:
-                Intent confirmationIntent = new Intent(context, SendConfirmationActivity.class);
+                Intent confirmationIntent = new Intent(context, WidgetSendConfirmationActivity.class);
                 confirmationIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
                 confirmationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(confirmationIntent);
@@ -69,7 +70,7 @@ public class SmsFactory {
                 Send(context, setting);
                 break;
             case 1:
-                Intent confirmationIntent = new Intent(context, SendConfirmationActivity.class);
+                Intent confirmationIntent = new Intent(context, NotificationSendConfirmationActivity.class);
                 confirmationIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
                 confirmationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(confirmationIntent);
