@@ -131,7 +131,6 @@ public class NotificationScheduler extends BroadcastReceiver {
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         Notification.Builder notification = new Notification.Builder(context);
-        //TODO: Update to white icon
         notification.setSmallIcon(R.drawable.ic_launcher);
         notification.setContentTitle("Direct SMS");
         notification.setContentText(setting.getWidgetTitle());
@@ -169,7 +168,7 @@ public class NotificationScheduler extends BroadcastReceiver {
         PendingIntent alarmIntent = PendingIntent.getBroadcast(context, widgetId, intent, 0);
 
         long timeStamp = SystemClock.elapsedRealtime() + setting.getAutoDismissMilis();
-        alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, timeStamp, alarmIntent);
+        alarmMgr.set(AlarmManager.ELAPSED_REALTIME, timeStamp, alarmIntent);
     }
 
     private void doRemove(Context context, int widgetId)
