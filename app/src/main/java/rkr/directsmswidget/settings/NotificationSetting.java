@@ -1,5 +1,7 @@
 package rkr.directsmswidget.settings;
 
+import java.util.Calendar;
+
 public class NotificationSetting extends MessageSetting {
     public static final String PREFS_NAME = "rkr.directsmswidget.NotificationPrefs";
 
@@ -39,19 +41,19 @@ public class NotificationSetting extends MessageSetting {
     public Boolean weekdayEnabled (int weekday)
     {
         switch (weekday) {
-            case 1:
+            case Calendar.MONDAY:
                 return day1;
-            case 2:
+            case Calendar.TUESDAY:
                 return day2;
-            case 3:
+            case Calendar.WEDNESDAY:
                 return day3;
-            case 4:
+            case Calendar.THURSDAY:
                 return day4;
-            case 5:
+            case Calendar.FRIDAY:
                 return day5;
-            case 6:
+            case Calendar.SATURDAY:
                 return day6;
-            case 7:
+            case Calendar.SUNDAY:
                 return day7;
         }
         return null;

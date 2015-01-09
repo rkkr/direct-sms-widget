@@ -14,9 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class SettingsFactory {
-    //public static final String PREFS_NAME = "rkr.directsmswidget.WidgetPrefs";
 
-    //static void save(Context context, int appWidgetId, WidgetSetting setting) {
     public static void save(Context context, int appWidgetId, Object setting) {
         SharedPreferences.Editor prefs = context.getSharedPreferences((String)get(setting, "PREFS_NAME"), Context.MODE_PRIVATE).edit();
 

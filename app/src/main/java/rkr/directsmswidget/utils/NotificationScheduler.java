@@ -80,7 +80,7 @@ public class NotificationScheduler extends BroadcastReceiver {
             alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
         }
 
-        //Log.d("rkr.directsmswidget.notificationscheduler", "Next notification in: " + (calendar.getTimeInMillis() - System.currentTimeMillis()) / 1000);
+        Log.d("rkr.directsmswidget.notificationscheduler", "Next notification in: " + (calendar.getTimeInMillis() - System.currentTimeMillis()) / 1000 + " seconds");
 
         setAutoBoot(context, true);
     }
