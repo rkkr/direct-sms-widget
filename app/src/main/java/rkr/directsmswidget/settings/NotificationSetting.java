@@ -35,4 +35,35 @@ public class NotificationSetting extends MessageSetting {
         }
         return -1;
     }
+
+    public Boolean weekdayEnabled (int weekday)
+    {
+        switch (weekday) {
+            case 1:
+                return day1;
+            case 2:
+                return day2;
+            case 3:
+                return day3;
+            case 4:
+                return day4;
+            case 5:
+                return day5;
+            case 6:
+                return day6;
+            case 7:
+                return day7;
+        }
+        return null;
+    }
+
+    public int daysToNextEnabledWeekDay (int weekday)
+    {
+        for (int i=1; i<=7; i++) {
+            int _weekday = (weekday + i - 1) % 7 + 1;
+            if (weekdayEnabled(_weekday))
+                return i;
+        }
+        return -1;
+    }
 }

@@ -61,9 +61,18 @@ public class NotificationScheduler extends BroadcastReceiver {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
-        //Next schedule is tomorrow
-        if (calendar.getTimeInMillis() <= System.currentTimeMillis())
-            calendar.add(Calendar.HOUR, 24);
+
+        if ((setting.day1 || setting.day2 || setting.day3 || setting.day4 || setting.day5 ||
+                setting.day6 || setting.day7) == false) {
+            //No weekdays are selected and time lower than now
+            if (calendar.getTimeInMillis() <= System.currentTimeMillis())
+                calendar.add(Calendar.HOUR, 24);
+        }
+        else {
+            //Weekday selected, time lower than now or today not selected
+            if (calendar.getTimeInMillis() <= System.currentTimeMillis() || !setting.weekdayEnabled(calendar.get(Calendar.DAY_OF_WEEK)))
+                calendar.add(Calendar.HOUR, 24 * setting.daysToNextEnabledWeekDay(calendar.get(Calendar.DAY_OF_WEEK)));
+        }
 
         if (android.os.Build.VERSION.SDK_INT >= 19){
             alarmMgr.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
@@ -91,7 +100,7 @@ public class NotificationScheduler extends BroadcastReceiver {
     {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        int dayOfWeek =  calendar.get(Calendar.DAY_OF_WEEK);
+        //int dayOfWeek =  calendar.get(Calendar.DAY_OF_WEEK);
 
         NotificationSetting setting = SettingsFactory.load(NotificationSetting.class, context, widgetId);
 
@@ -101,28 +110,30 @@ public class NotificationScheduler extends BroadcastReceiver {
             return;
         }
 
-        if (dayOfWeek == Calendar.MONDAY && setting.day1 ||
+        //Scheduled for this weekday - don't check
+        doNotify(context, setting, widgetId);
+
+        /*if (dayOfWeek == Calendar.MONDAY && setting.day1 ||
             dayOfWeek == Calendar.TUESDAY && setting.day2 ||
             dayOfWeek == Calendar.WEDNESDAY && setting.day3 ||
             dayOfWeek == Calendar.THURSDAY && setting.day4 ||
             dayOfWeek == Calendar.FRIDAY && setting.day5 ||
             dayOfWeek == Calendar.SATURDAY && setting.day6 ||
             dayOfWeek == Calendar.SUNDAY && setting.day7
-            )
-        {
+            ) {
             doNotify(context, setting, widgetId);
-            //Add next schedule event
-            sync(context, widgetId, setting);
-            return;
-        }
+        }*/
 
         if ((setting.day1 || setting.day2 || setting.day3 || setting.day4 || setting.day5 ||
-                setting.day6 || setting.day7) == false)
-        {
-            doNotify(context, setting, widgetId);
+                setting.day6 || setting.day7) == false) {
+            //doNotify(context, setting, widgetId);
             //Disable single use event
             setting.enabled = false;
             SettingsFactory.save(context, widgetId, setting);
+        }
+        else {
+            //At least one week day is selected - add next scheduled event
+            sync(context, widgetId, setting);
         }
     }
 

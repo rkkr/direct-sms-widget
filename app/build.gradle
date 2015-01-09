@@ -7,8 +7,8 @@ android {
         applicationId 'rkr.directsmswidget'
         minSdkVersion 15
         targetSdkVersion 21
-        versionCode 15
-        versionName '0.1.10'
+        versionCode 16
+        versionName '0.1.11'
     }
     buildTypes {
         release {
