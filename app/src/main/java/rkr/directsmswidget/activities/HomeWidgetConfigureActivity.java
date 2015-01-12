@@ -39,7 +39,7 @@ import rkr.directsmswidget.utils.Helpers;
 public class HomeWidgetConfigureActivity extends Activity {
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-    public static int widgetClickActionSelection = 0;
+    public static int widgetClickActionSelection = 1;
     private static int mSelectedColorBackground = 0xff33b5e5;
     private static int mSelectedColorText = 0xffffffff;
 
@@ -56,12 +56,19 @@ public class HomeWidgetConfigureActivity extends Activity {
     public void passOnCreate(Bundle icicle)
     {
         super.onCreate(icicle);
+
+        findViewById(R.id.button_select_contact).setOnClickListener(mOnSelectContactClickListener);
+        findViewById(R.id.button_add_new_contact).setOnClickListener(mAddContactClickListener);
+        findViewById(R.id.button_delete_contact).setOnClickListener(mDeleteContactClickListener);
+
+        ((Spinner)findViewById(R.id.cboClickAction)).setSelection(widgetClickActionSelection);
+
+        ((Spinner)findViewById(R.id.cboClickAction)).setOnItemSelectedListener(mOnSelectWidgetClickAction);
+        contactRows.add(new ContactRow(findViewById(R.id.layout_contact_row_1)));
     }
 
     @Override
     public void onCreate(Bundle icicle) {
-        super.onCreate(icicle);
-
         // Set the result to CANCELED.  This will cause the widget host to cancel
         // out of the widget placement if the user presses the back button.
         setResult(RESULT_CANCELED);
@@ -69,14 +76,11 @@ public class HomeWidgetConfigureActivity extends Activity {
         //Open view
         setContentView(R.layout.home_widget_configure);
 
+        passOnCreate(icicle);
+
         //Button handlers
-        findViewById(R.id.button_select_contact).setOnClickListener(mOnSelectContactClickListener);
         findViewById(R.id.button_select_color_text).setOnClickListener(mOnSelectWidgetTextColorClickListener);
         findViewById(R.id.button_select_color_background).setOnClickListener(mOnSelectWidgetBackgroundColorClickListener);
-        findViewById(R.id.button_add_new_contact).setOnClickListener(mAddContactClickListener);
-        findViewById(R.id.button_delete_contact).setOnClickListener(mDeleteContactClickListener);
-        ((Spinner)findViewById(R.id.cboClickAction)).setOnItemSelectedListener(mOnSelectWidgetClickAction);
-        contactRows.add(new ContactRow(findViewById(R.id.layout_contact_row_1)));
 
         mAppWidgetId = Helpers.IntentToWidgetId(getIntent());
 

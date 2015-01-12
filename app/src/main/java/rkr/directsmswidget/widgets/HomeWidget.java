@@ -8,6 +8,8 @@ import android.widget.RemoteViews;
 import android.app.PendingIntent;
 import android.content.Intent;
 
+import java.util.Arrays;
+
 import rkr.directsmswidget.R;
 import rkr.directsmswidget.settings.SettingsFactory;
 import rkr.directsmswidget.settings.WidgetSetting;
@@ -20,6 +22,7 @@ public class HomeWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
+        Log.d("Direct SMS Widget", "Received intent: " + intent.getAction());
         if (intent.getAction().startsWith(CLICK_ACTION)) {
             SmsFactory.Send(WidgetSetting.class, context, intent);
         }
@@ -28,6 +31,7 @@ public class HomeWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
+        Log.d("Direct SMS Widget", "Update for widgets: " + Arrays.toString(appWidgetIds));
         final int N = appWidgetIds.length;
         for (int i=0; i<N; i++) {
             updateAppWidget(context, appWidgetManager, appWidgetIds[i]);

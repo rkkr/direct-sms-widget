@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -31,20 +32,17 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
 
     private int selectedTimeHour;
     private int selectedTimeMinute;
-    private static int notificationAutoDismissSelection = 0;
+    private static int notificationAutoDismissSelection = 2;
 
     @Override
     public void onCreate(Bundle icicle) {
-        super.passOnCreate(icicle);
-
         //Open view
         setContentView(R.layout.notification_widget_configure);
 
         //Button handlers
-        findViewById(R.id.button_select_contact).setOnClickListener(mOnSelectContactClickListener);
-        findViewById(R.id.button_add_new_contact).setOnClickListener(mAddContactClickListener);
-        findViewById(R.id.button_delete_contact).setOnClickListener(mDeleteContactClickListener);
         findViewById(R.id.button_select_time).setOnClickListener(mSelectTimeClickListener);
+
+        super.passOnCreate(icicle);
 
         findViewById(R.id.button_select_week_mon).setOnClickListener(mSelectWeekToggleClickListener);
         findViewById(R.id.button_select_week_tue).setOnClickListener(mSelectWeekToggleClickListener);
@@ -54,9 +52,7 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
         findViewById(R.id.button_select_week_sat).setOnClickListener(mSelectWeekToggleClickListener);
         findViewById(R.id.button_select_week_sun).setOnClickListener(mSelectWeekToggleClickListener);
 
-        ((Spinner)findViewById(R.id.cboClickAction)).setOnItemSelectedListener(mOnSelectWidgetClickAction);
         ((Spinner)findViewById(R.id.cboNotificationDismiss)).setOnItemSelectedListener(mOnSelectAutoDismiss);
-        contactRows.add(new ContactRow(findViewById(R.id.layout_contact_row_1)));
 
         if (getIntent().getExtras() != null && getIntent().getExtras().getBoolean("loadExisting", false))
         {
@@ -68,6 +64,7 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
         {
             mAppWidgetId = Helpers.getRandInt();
             updateTimeView(8, 0);
+            ((Spinner)findViewById(R.id.cboNotificationDismiss)).setSelection(notificationAutoDismissSelection);
         }
     }
 
@@ -117,6 +114,7 @@ public class NotificationConfigureActivity extends HomeWidgetConfigureActivity {
     AdapterView.OnItemSelectedListener mOnSelectAutoDismiss = new AdapterView.OnItemSelectedListener(){
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            //Log.d("Direct SMS Widget", "Selected autodismiss: " + pos);
             notificationAutoDismissSelection = pos;
         }
 
