@@ -1,0 +1,1 @@
+Direct SMS Widget application uses Contacts permission to fill phone numbers from user selected contacts. No other user information is stored within application. No user information is transmitted from application.
